@@ -8,7 +8,7 @@ var encodingMethods = {
   deflate: zlib.createDeflate
 }
 
-module.exports = function compress(options) {
+module.exports = function (options) {
   options = options || {}
 
   var filter = options.filter
@@ -19,7 +19,7 @@ module.exports = function compress(options) {
     : typeof options.threshold === 'string' ? bytes(options.threshold)
     : 1024
 
-  return function (next) {
+  return function compress(next) {
     return function *() {
       yield next
 
