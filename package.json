@@ -18,14 +18,14 @@
     "url": "https://github.com/jonathanong/koa-compress/issues"
   },
   "dependencies": {
-    "negotiator": "0.2.7",
-    "bytes": "0.2.1"
+    "negotiator": "~0.2.7",
+    "bytes": "~0.2.1"
   },
   "peerDependencies": {
     "koa": "*"
   },
   "devDependencies": {
-    "koa": "*",
+    "koa": "koajs/koa",
     "mocha": "~1.12.0",
     "should": "~1.2.2",
     "supertest": "~0.7.1"

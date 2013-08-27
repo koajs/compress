@@ -75,7 +75,7 @@ module.exports = function (options) {
       this.res.removeHeader('Content-Length')
 
       var stream = encodingMethods[encoding](options)
-        .on('error', this.error.bind(this))
+        .on('error', this.onerror.bind(this))
 
       if (body instanceof Stream)
         body.pipe(stream)
