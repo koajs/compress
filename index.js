@@ -74,10 +74,12 @@ module.exports = function (options) {
       if (!(this.compress === true || filter.test(contentType)))
         return
 
-      var encoding = this.acceptedEncodings[0];
+      // identity
+      var encoding = this.acceptedEncodings[0]
       if (encoding === 'identity') return
 
-      if (threshold && length < threshold) return;
+      // threshold
+      if (threshold && length < threshold) return
 
       this.set('Content-Encoding', encoding)
       this.res.removeHeader('Content-Length')
