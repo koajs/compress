@@ -28,7 +28,7 @@ module.exports = function (options) {
   options = options || {}
 
   var filter = options.filter
-    || /json|text|javascript|dart/i
+    || /json|text|javascript|dart|image\/svg\+xml|application\/x-font-ttf|application\/vnd\.ms-opentype|application\/vnd\.ms-fontobject/
 
   var threshold = !options.threshold ? 1024
     : typeof options.threshold === 'number' ? options.threshold
