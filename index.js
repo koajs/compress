@@ -86,10 +86,12 @@ module.exports = function (options) {
 
       var stream = encodingMethods[encoding](options)
 
-      if (body instanceof Stream)
+      if (body instanceof Stream) {
+        body.on('error', this.onerror)
         body.pipe(stream)
-      else
+      } else {
         stream.end(body)
+      }
 
       this.body = stream
     }
