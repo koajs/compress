@@ -53,25 +53,9 @@ module.exports = function (options) {
 
       var length = this.responseLength;
 
-      // set Content-Type for filtering
-      if (Buffer.isBuffer(body)) {
-        if (!this.responseHeader['content-type'])
-          this.set('Content-Type', 'application/octet-stream')
-      } else if (typeof body === 'string') {
-        if (!this.responseHeader['content-type'])
-          this.set('Content-Type', 'text/plain; charset=utf-8')
-      } else if (body instanceof Stream) {
-        if (!this.responseHeader['content-type'])
-          this.set('Content-Type', 'application/octet-stream')
-      } else {
-        // JSON
-        body = JSON.stringify(body, null, this.app.jsonSpaces)
-        this.set('Content-Type', 'application/json')
-      }
-
       // forced compression or implied
-      var contentType = this.responseHeader['content-type']
-      if (!(this.compress === true || filter.test(contentType)))
+      var type = this.responseHeader['content-type']
+      if (!(this.compress === true || filter.test(type)))
         return
 
       // identity
@@ -80,6 +64,11 @@ module.exports = function (options) {
 
       // threshold
       if (threshold && length < threshold) return
+
+      // json
+      if (isJSON(body)) {
+        body = JSON.stringify(body, null, this.app.jsonSpaces)
+      }
 
       this.set('Content-Encoding', encoding)
       this.res.removeHeader('Content-Length')
@@ -96,4 +85,17 @@ module.exports = function (options) {
       this.body = stream
     }
   }
+}
+
+/**
+ * Check if `obj` should be interpreted as json.
+ *
+ * TODO: lame... ctx.responseType?
+ */
+
+function isJSON(obj) {
+  if ('string' == typeof obj) return false;
+  if (obj instanceof Stream) return false;
+  if (Buffer.isBuffer(obj)) return false;
+  return true;
 }
