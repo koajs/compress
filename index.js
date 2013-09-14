@@ -35,24 +35,20 @@ module.exports = function (options) {
         || body == null
       ) return
 
-      var length
+      var length = this.responseLength;
+
       if (Buffer.isBuffer(body)) {
         if (!this.responseHeader['content-type'])
           this.set('Content-Type', 'application/octet-stream')
-
-        length = body.length
       } else if (typeof body === 'string') {
         if (!this.responseHeader['content-type'])
           this.set('Content-Type', 'text/plain; charset=utf-8')
-
-        length = Buffer.byteLength(body)
       } else if (body instanceof Stream) {
         if (!this.responseHeader['content-type'])
           this.set('Content-Type', 'application/octet-stream')
       } else {
         // JSON
         body = JSON.stringify(body, null, this.app.jsonSpaces)
-        length = Buffer.byteLength(body)
         this.set('Content-Type', 'application/json')
       }
 
