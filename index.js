@@ -77,10 +77,7 @@ module.exports = function (options) {
       var encoding = this.acceptedEncodings[0];
       if (encoding === 'identity') return
 
-      if (threshold
-        && (typeof body === 'string' || Buffer.isBuffer(body))
-        && length < threshold
-      ) return
+      if (threshold && length < threshold) return;
 
       this.set('Content-Encoding', encoding)
       this.res.removeHeader('Content-Length')
