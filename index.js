@@ -1,12 +1,28 @@
-var zlib = require('zlib')
+
+/**
+ * Module dependencies.
+ */
+
 var Stream = require('stream')
 var bytes = require('bytes')
-var Negotiator = require('negotiator')
+var zlib = require('zlib')
+
+/**
+ * Encoding methods supported.
+ */
 
 var encodingMethods = {
   gzip: zlib.createGzip,
   deflate: zlib.createDeflate
 }
+
+/**
+ * Compress middleware.
+ *
+ * @param {Object} [options]
+ * @return {Function}
+ * @api public
+ */
 
 module.exports = function (options) {
   options = options || {}
@@ -58,11 +74,8 @@ module.exports = function (options) {
       if (!(this.compress === true || filter.test(contentType)))
         return
 
-      var encodings = new Negotiator(this.req)
-        .preferredEncodings(['gzip', 'deflate', 'identity'])
-      var encoding = encodings[0] || 'identity'
-      if (encoding === 'identity')
-        return
+      var encoding = this.acceptedEncodings[0];
+      if (encoding === 'identity') return
 
       if (threshold
         && (typeof body === 'string' || Buffer.isBuffer(body))
