@@ -37,6 +37,7 @@ module.exports = function (options) {
 
       var length = this.responseLength;
 
+      // set Content-Type for filtering
       if (Buffer.isBuffer(body)) {
         if (!this.responseHeader['content-type'])
           this.set('Content-Type', 'application/octet-stream')
@@ -52,6 +53,7 @@ module.exports = function (options) {
         this.set('Content-Type', 'application/json')
       }
 
+      // forced compression or implied
       var contentType = this.responseHeader['content-type']
       if (!(this.compress === true || filter.test(contentType)))
         return
