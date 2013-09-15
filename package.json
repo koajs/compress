@@ -11,11 +11,11 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/jonathanong/koa-compress.git"
+    "url": "https://github.com/koajs/compress.git"
   },
   "bugs": {
     "mail": "me@jongleberry.com",
-    "url": "https://github.com/jonathanong/koa-compress/issues"
+    "url": "https://github.com/koajs/compress/issues"
   },
   "dependencies": {
     "bytes": "~0.2.1"
