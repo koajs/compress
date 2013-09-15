@@ -1,4 +1,4 @@
-# Koa Compress [![Build Status](https://travis-ci.org/jonathanong/koa-compress.png)](https://travis-ci.org/jonathanong/koa-compress)
+# Koa Compress [![Build Status](https://travis-ci.org/koajs/compress.png)](https://travis-ci.org/koajs/compress)
 
 Compress middleware for Koa
 
