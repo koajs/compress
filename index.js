@@ -1,4 +1,3 @@
-
 /**
  * Module dependencies.
  */
@@ -37,9 +36,9 @@ module.exports = function (options) {
 
   return function compress(next) {
     return function *() {
-      yield next
-
       this.vary('Accept-Encoding')
+      
+      yield next
 
       var body = this.body
 
