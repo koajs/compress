@@ -75,8 +75,7 @@ module.exports = function (options) {
       var stream = encodingMethods[encoding](options)
 
       if (body instanceof Stream) {
-        body.on('error', this.onerror.bind(this))
-        body.pipe(stream)
+        body.on('error', this.onerror).pipe(stream)
       } else {
         stream.end(body)
       }
