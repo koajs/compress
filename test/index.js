@@ -31,9 +31,7 @@ describe('Compress', function () {
     app.use(compress())
     app.use(sendString)
 
-    var server = http.createServer(app.callback())
-
-    request(server)
+    request(app.listen())
     .get('/')
     .expect(200)
     .end(function (err, res) {
@@ -52,14 +50,13 @@ describe('Compress', function () {
 
   it('should not compress strings below threshold', function (done) {
     var app = koa()
+
     app.use(compress({
       threshold: '1mb'
     }))
     app.use(sendString)
 
-    var server = http.createServer(app.callback())
-
-    request(server)
+    request(app.listen())
     .get('/')
     .expect(200)
     .end(function (err, res) {
@@ -82,9 +79,7 @@ describe('Compress', function () {
     app.use(compress())
     app.use(sendBuffer)
 
-    var server = http.createServer(app.callback())
-
-    request(server)
+    request(app.listen())
     .get('/')
     .expect(200)
     .end(function (err, res) {
@@ -112,9 +107,7 @@ describe('Compress', function () {
       }
     })
 
-    var server = http.createServer(app.callback())
-
-    request(server)
+    request(app.listen())
     .get('/')
     .expect(200)
     .end(function (err, res) {
@@ -136,9 +129,7 @@ describe('Compress', function () {
     app.use(compress())
     app.use(sendBuffer)
 
-    var server = http.createServer(app.callback())
-
-    request(server)
+    request(app.listen())
     .get('/')
     .expect(200)
     .end(function (err, res) {
@@ -165,9 +156,7 @@ describe('Compress', function () {
       }
     })
 
-    var server = http.createServer(app.callback())
-
-    request(server)
+    request(app.listen())
     .get('/')
     .expect(200)
     .end(function (err, res) {
@@ -189,9 +178,7 @@ describe('Compress', function () {
     app.use(compress())
     app.use(sendString)
 
-    var server = http.createServer(app.callback())
-
-    request(server)
+    request(app.listen())
     .head('/')
     .expect(200)
     .expect('', function (err, res) {
@@ -202,5 +189,17 @@ describe('Compress', function () {
 
       done()
     })
+  })
+
+  it('should not crash even if accept-encoding: sdch', function (done) {
+    var app = koa()
+
+    app.use(compress())
+    app.use(sendBuffer)
+
+    request(app.listen())
+    .get('/')
+    .set('Accept-Encoding', 'sdch, gzip, deflate')
+    .expect(200, done)
   })
 })

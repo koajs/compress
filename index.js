@@ -37,7 +37,7 @@ module.exports = function (options) {
   return function compress(next) {
     return function *() {
       this.vary('Accept-Encoding')
-      
+
       yield next
 
       var body = this.body
@@ -58,7 +58,7 @@ module.exports = function (options) {
         return
 
       // identity
-      var encoding = this.acceptedEncodings[0]
+      var encoding = this.acceptsEncodings('gzip', 'deflate')
       if (encoding === 'identity') return
 
       // threshold
