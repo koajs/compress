@@ -34,54 +34,51 @@ module.exports = function (options) {
     : typeof options.threshold === 'string' ? bytes(options.threshold)
     : 1024
 
-  return function compress(next) {
-    return function *() {
-      this.vary('Accept-Encoding')
+  return function* compress(next) {
+    this.vary('Accept-Encoding')
 
-      yield next
+    yield next
 
-      var body = this.body
+    var body = this.body
 
-      if (this.compress === false
-        || this.method === 'HEAD'
-        || this.status === 204
-        || this.status === 304
-        // Assumes you either always set a body or always don't
-        || body == null
-      ) return
+    if (this.compress === false
+      || this.method === 'HEAD'
+      || this.status === 204
+      || this.status === 304
+      // Assumes you either always set a body or always don't
+      || body == null
+    ) return
 
-      var length = this.responseLength;
+    var length = this.responseLength;
 
-      // forced compression or implied
-      var type = this.responseHeader['content-type']
-      if (!(this.compress === true || filter.test(type)))
-        return
+    // forced compression or implied
+    var type = this.responseHeader['content-type']
+    if (!(this.compress === true || filter.test(type))) return
 
-      // identity
-      var encoding = this.acceptsEncodings('gzip', 'deflate')
-      if (encoding === 'identity') return
+    // identity
+    var encoding = this.acceptsEncodings('gzip', 'deflate')
+    if (encoding === 'identity') return
 
-      // threshold
-      if (threshold && length < threshold) return
+    // threshold
+    if (threshold && length < threshold) return
 
-      // json
-      if (isJSON(body)) {
-        body = JSON.stringify(body, null, this.app.jsonSpaces)
-      }
-
-      this.set('Content-Encoding', encoding)
-      this.res.removeHeader('Content-Length')
-
-      var stream = encodingMethods[encoding](options)
-
-      if (body instanceof Stream) {
-        body.on('error', this.onerror).pipe(stream)
-      } else {
-        stream.end(body)
-      }
-
-      this.body = stream
+    // json
+    if (isJSON(body)) {
+      body = JSON.stringify(body, null, this.app.jsonSpaces)
     }
+
+    this.set('Content-Encoding', encoding)
+    this.res.removeHeader('Content-Length')
+
+    var stream = encodingMethods[encoding](options)
+
+    if (body instanceof Stream) {
+      body.on('error', this.onerror).pipe(stream)
+    } else {
+      stream.end(body)
+    }
+
+    this.body = stream
   }
 }
 

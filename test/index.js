@@ -12,17 +12,13 @@ describe('Compress', function () {
   var buffer = crypto.randomBytes(1024)
   var string = buffer.toString('hex')
 
-  function sendString(next) {
-    return function *() {
-      this.body = string
-    }
+  function* sendString(next) {
+    this.body = string
   }
 
-  function sendBuffer(next) {
-    return function *() {
-      this.compress = true
-      this.body = buffer
-    }
+  function* sendBuffer(next) {
+    this.compress = true
+    this.body = buffer
   }
 
   it('should compress strings', function (done) {
@@ -100,11 +96,9 @@ describe('Compress', function () {
 
     app.use(compress())
 
-    app.use(function (next) {
-      return function *() {
-        this.type = 'application/javascript'
-        this.body = fs.createReadStream(path.join(__dirname, 'index.js'))
-      }
+    app.use(function* (next) {
+      this.type = 'application/javascript'
+      this.body = fs.createReadStream(path.join(__dirname, 'index.js'))
     })
 
     request(app.listen())
@@ -149,11 +143,9 @@ describe('Compress', function () {
     var app = koa()
 
     app.use(compress())
-    app.use(function (next) {
-      return function *() {
-        this.compress = false
-        this.body = buffer
-      }
+    app.use(function *(next) {
+      this.compress = false
+      this.body = buffer
     })
 
     request(app.listen())
