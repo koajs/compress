@@ -49,18 +49,15 @@ module.exports = function (options) {
       || body == null
     ) return
 
-    var length = this.responseLength;
-
     // forced compression or implied
-    var type = this.responseHeader['content-type']
-    if (!(this.compress === true || filter.test(type))) return
+    if (!(this.compress === true || filter.test(this.response.type))) return
 
     // identity
     var encoding = this.acceptsEncodings('gzip', 'deflate')
     if (encoding === 'identity') return
 
     // threshold
-    if (threshold && length < threshold) return
+    if (threshold && this.response.length < threshold) return
 
     // json
     if (isJSON(body)) {
