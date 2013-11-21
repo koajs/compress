@@ -194,4 +194,29 @@ describe('Compress', function () {
     .set('Accept-Encoding', 'sdch, gzip, deflate')
     .expect(200, done)
   })
+
+  it('should not crash if no accept-encoding is sent', function (done) {
+    var app = koa()
+
+    app.use(compress())
+    app.use(sendBuffer)
+
+    request(app.listen())
+    .get('/')
+    .expect(200, done)
+  })
+
+  it('should not crash if a type does not pass the filter', function (done) {
+    var app = koa()
+
+    app.use(compress())
+    app.use(function* () {
+      this.type = 'image/png'
+      this.body = new Buffer(2048)
+    })
+
+    request(app.listen())
+    .get('/')
+    .expect(200, done)
+  })
 })
