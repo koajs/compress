@@ -2,6 +2,7 @@
  * Module dependencies.
  */
 
+var compressible = require('compressible')
 var Stream = require('stream')
 var bytes = require('bytes')
 var zlib = require('zlib')
@@ -26,8 +27,7 @@ var encodingMethods = {
 module.exports = function (options) {
   options = options || {}
 
-  var filter = options.filter
-    || /json|text|javascript|dart|image\/svg\+xml|application\/x-font-ttf|application\/vnd\.ms-opentype|application\/vnd\.ms-fontobject/
+  var filter = options.filter || compressible
 
   var threshold = !options.threshold ? 1024
     : typeof options.threshold === 'number' ? options.threshold
@@ -50,7 +50,7 @@ module.exports = function (options) {
     ) return
 
     // forced compression or implied
-    if (!(this.compress === true || filter.test(this.response.type))) return
+    if (!(this.compress === true || filter(this.response.type))) return
 
     // identity
     var encoding = this.acceptsEncodings('gzip', 'deflate')

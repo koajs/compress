@@ -18,6 +18,7 @@
     "url": "https://github.com/koajs/compress/issues"
   },
   "dependencies": {
+    "compressible": "~0.1.1",
     "bytes": "~0.2.1"
   },
   "peerDependencies": {
