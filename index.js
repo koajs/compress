@@ -37,7 +37,7 @@ module.exports = function (options) {
   return function* compress(next) {
     this.vary('Accept-Encoding')
 
-    yield next
+    yield* next
 
     var body = this.body
 

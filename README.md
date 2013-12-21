@@ -22,8 +22,8 @@ The options are passed to `zlib`: http://nodejs.org/api/zlib.html#zlib_options
 
 ### filter
 
-Regular expression filter to check the response content type to decide whether to compress.
-By default, `/json|text|javascript|dart/i`.
+An optional function that checks the response content type to decide whether to compress.
+By default, it uses [compressible](https://github.com/expressjs/compressible).
 
 ### threshold
 
