@@ -53,7 +53,8 @@ module.exports = function (options) {
     if (!(this.compress === true || filter(this.response.type))) return
 
     // identity
-    var encoding = this.acceptsEncodings('gzip', 'deflate')
+    var encoding = this.acceptsEncodings('gzip', 'deflate', 'identity')
+    if (!encoding) this.throw(406, 'supported encodings: gzip, deflate, identity')
     if (encoding === 'identity') return
 
     // threshold
