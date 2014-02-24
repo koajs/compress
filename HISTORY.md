@@ -1,3 +1,10 @@
+
+1.0.3 / 2014-02-24
+==================
+
+ * fix for threshold and JSON bodies @logicoder
+ * remove `app.jsonSpaces` support
+
 1.0.2 / 2014-01-21
 ==================
 
