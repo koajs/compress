@@ -63,6 +63,7 @@ module.exports = function (options) {
     // json
     if (isJSON(body)) {
       body = JSON.stringify(body, null, this.app.jsonSpaces)
+      if (threshold && body.length < threshold) return
     }
 
     this.set('Content-Encoding', encoding)
