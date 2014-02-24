@@ -62,7 +62,7 @@ module.exports = function (options) {
 
     // json
     if (isJSON(body)) {
-      body = JSON.stringify(body, null, this.app.jsonSpaces)
+      body = JSON.stringify(body)
       if (threshold && body.length < threshold) return
     }
 
