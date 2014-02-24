@@ -69,6 +69,56 @@ describe('Compress', function () {
     })
   })
 
+  it('should compress JSON body', function (done) {
+    var app = koa()
+    var jsonBody = { 'status': 200, 'message': 'ok', 'data': string }
+
+    app.use(compress())
+    app.use(function* (next) {
+      this.body = jsonBody
+    })
+
+    request(app.listen())
+    .get('/')
+    .expect(200)
+    .end(function (err, res) {
+      if (err)
+        return done(err)
+
+      res.should.have.header('Transfer-Encoding', 'chunked')
+      res.should.have.header('Vary', 'Accept-Encoding')
+      res.headers.should.not.have.property('content-length')
+      res.text.should.equal(JSON.stringify(jsonBody))
+
+      done()
+    })
+  })
+
+  it('should not compress JSON body below threshold', function (done) {
+    var app = koa()
+    var jsonBody = { 'status': 200, 'message': 'ok' }
+
+    app.use(compress())
+    app.use(function* sendJSON(next) {
+      this.body = jsonBody
+    })
+
+    request(app.listen())
+    .get('/')
+    .expect(200)
+    .end(function (err, res) {
+      if (err)
+        return done(err)
+
+      res.should.have.header('Vary', 'Accept-Encoding')
+      res.headers.should.not.have.property('content-encoding')
+      res.headers.should.not.have.property('transfer-encoding')
+      res.text.should.equal(JSON.stringify(jsonBody))
+
+      done()
+    })
+  })
+
   it('should compress buffers', function (done) {
     var app = koa()
 
