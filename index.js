@@ -47,6 +47,8 @@ module.exports = function (options) {
       || this.status === 304
       // Assumes you either always set a body or always don't
       || body == null
+      // Skip if content-encoding is already set
+      || this.response.get('Content-Encoding')
     ) return
 
     // forced compression or implied

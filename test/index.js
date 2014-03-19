@@ -269,4 +269,21 @@ describe('Compress', function () {
     .get('/')
     .expect(200, done)
   })
+
+  it('should not compress when transfer-encoding is already set', function (done) {
+    var app = koa()
+
+    app.use(compress({
+      threshold: 0
+    }))
+    app.use(function* () {
+      this.set('Content-Encoding', 'identity')
+      this.type = 'text'
+      this.body = 'asdf'
+    })
+
+    request(app.listen())
+    .get('/')
+    .expect('asdf', done)
+  })
 })
