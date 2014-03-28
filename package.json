@@ -19,7 +19,7 @@
   },
   "dependencies": {
     "compressible": "~1.0.0",
-    "bytes": "~0.2.1"
+    "bytes": "~0.3.0"
   },
   "peerDependencies": {
     "koa": "*"
