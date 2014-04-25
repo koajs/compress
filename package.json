@@ -11,23 +11,18 @@
   "license": "MIT",
   "repository": "koajs/compress",
   "dependencies": {
-    "koa-is-json": "~1.0.0",
-    "compressible": "~1.0.0",
-    "bytes": "~0.3.0"
-  },
-  "peerDependencies": {
-    "koa": "*"
+    "statuses": "1",
+    "koa-is-json": "1",
+    "compressible": "1",
+    "bytes": "0"
   },
   "devDependencies": {
-    "koa": "koajs/koa",
+    "koa": "*",
     "mocha": "*",
     "should": "*",
     "supertest": "*"
   },
   "scripts": {
     "test": "make test"
-  },
-  "engines": {
-    "node": "> 0.11.4"
   }
 }
