@@ -1,4 +1,15 @@
 
+1.0.5 / 2014-04-24
+==================
+
+ * bump bytes
+ * refactor to use koa-is-json
+
+1.0.4 / 2014-03-
+==================
+
+ * skip compression if content-encoding is not set
+
 1.0.3 / 2014-02-24
 ==================
 

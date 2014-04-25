@@ -1,7 +1,7 @@
 {
   "name": "koa-compress",
   "description": "Compress middleware for koa",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "author": {
     "name": "Jonathan Ong",
     "email": "me@jongleberry.com",
@@ -9,15 +9,9 @@
     "twitter": "https://twitter.com/jongleberry"
   },
   "license": "MIT",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/koajs/compress.git"
-  },
-  "bugs": {
-    "mail": "me@jongleberry.com",
-    "url": "https://github.com/koajs/compress/issues"
-  },
+  "repository": "koajs/compress",
   "dependencies": {
+    "koa-is-json": "~1.0.0",
     "compressible": "~1.0.0",
     "bytes": "~0.3.0"
   },

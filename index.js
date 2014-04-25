@@ -3,6 +3,7 @@
  */
 
 var compressible = require('compressible')
+var isJSON = require('koa-is-json')
 var Stream = require('stream')
 var bytes = require('bytes')
 var zlib = require('zlib')
@@ -81,17 +82,4 @@ module.exports = function (options) {
 
     this.body = stream
   }
-}
-
-/**
- * Check if `obj` should be interpreted as json.
- *
- * TODO: lame... ctx.responseType?
- */
-
-function isJSON(obj) {
-  if ('string' == typeof obj) return false;
-  if (obj instanceof Stream) return false;
-  if (Buffer.isBuffer(obj)) return false;
-  return true;
 }
