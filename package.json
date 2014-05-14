@@ -14,7 +14,7 @@
     "statuses": "1",
     "koa-is-json": "1",
     "compressible": "1",
-    "bytes": "0"
+    "bytes": "1"
   },
   "devDependencies": {
     "koa": "*",
