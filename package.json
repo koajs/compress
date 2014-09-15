@@ -13,16 +13,24 @@
   "dependencies": {
     "statuses": "1",
     "koa-is-json": "1",
-    "compressible": "1",
+    "compressible": "2",
     "bytes": "1"
   },
   "devDependencies": {
-    "koa": "*",
-    "mocha": "*",
-    "should": "*",
-    "supertest": "*"
+    "istanbul-harmony": "0",
+    "koa": "0",
+    "mocha": "1",
+    "should": "3",
+    "supertest": "0"
   },
   "scripts": {
-    "test": "make test"
-  }
+    "test": "NODE_ENV=test mocha --harmony-generators --require should --reporter spec",
+    "test-cov": "NODE_ENV=test node --harmony-generators ./node_modules/.bin/istanbul cover ./node_modules/.bin/_mocha -- --require should",
+    "test-travis": "NODE_ENV=test node --harmony-generators ./node_modules/.bin/istanbul cover ./node_modules/.bin/_mocha --report lcovonly -- --require should"
+  },
+  "files": [
+    "index.js",
+    "LICENSE",
+    "HISTORY.md"
+  ]
 }
