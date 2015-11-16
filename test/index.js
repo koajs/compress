@@ -8,7 +8,7 @@ var fs = require('fs')
 var path = require('path')
 var compress = require('..')
 
-describe('Compress', function () {
+describe('Compress', () => {
   var buffer = crypto.randomBytes(1024)
   var string = buffer.toString('hex')
 
@@ -21,7 +21,7 @@ describe('Compress', function () {
     ctx.body = buffer
   }
 
-  it('should compress strings', function (done) {
+  it('should compress strings', (done) => {
     var app = new Koa()
 
     app.use(compress())
@@ -30,7 +30,7 @@ describe('Compress', function () {
     request(app.listen())
     .get('/')
     .expect(200)
-    .end(function (err, res) {
+    .end((err, res) => {
       if (err)
         return done(err)
 
@@ -44,7 +44,7 @@ describe('Compress', function () {
     })
   })
 
-  it('should not compress strings below threshold', function (done) {
+  it('should not compress strings below threshold', (done) => {
     var app = new Koa()
 
     app.use(compress({
@@ -55,7 +55,7 @@ describe('Compress', function () {
     request(app.listen())
     .get('/')
     .expect(200)
-    .end(function (err, res) {
+    .end((err, res) => {
       if (err)
         return done(err)
 
@@ -69,19 +69,19 @@ describe('Compress', function () {
     })
   })
 
-  it('should compress JSON body', function (done) {
+  it('should compress JSON body', (done) => {
     var app = new Koa()
     var jsonBody = { 'status': 200, 'message': 'ok', 'data': string }
 
     app.use(compress())
-    app.use(function (ctx, next) {
+    app.use((ctx, next) => {
       ctx.body = jsonBody
     })
 
     request(app.listen())
     .get('/')
     .expect(200)
-    .end(function (err, res) {
+    .end((err, res) => {
       if (err)
         return done(err)
 
@@ -94,19 +94,19 @@ describe('Compress', function () {
     })
   })
 
-  it('should not compress JSON body below threshold', function (done) {
+  it('should not compress JSON body below threshold', (done) => {
     var app = new Koa()
     var jsonBody = { 'status': 200, 'message': 'ok' }
 
     app.use(compress())
-    app.use(function sendJSON(ctx, next) {
+    app.use((ctx, next) => {
       ctx.body = jsonBody
     })
 
     request(app.listen())
     .get('/')
     .expect(200)
-    .end(function (err, res) {
+    .end((err, res) => {
       if (err)
         return done(err)
 
@@ -119,7 +119,7 @@ describe('Compress', function () {
     })
   })
 
-  it('should compress buffers', function (done) {
+  it('should compress buffers', (done) => {
     var app = new Koa()
 
     app.use(compress())
@@ -128,7 +128,7 @@ describe('Compress', function () {
     request(app.listen())
     .get('/')
     .expect(200)
-    .end(function (err, res) {
+    .end((err, res) => {
       if (err)
         return done(err)
 
@@ -141,12 +141,12 @@ describe('Compress', function () {
     })
   })
 
-  it('should compress streams', function (done) {
+  it('should compress streams', (done) => {
     var app = new Koa()
 
     app.use(compress())
 
-    app.use(function (ctx, next) {
+    app.use((ctx, next) => {
       ctx.type = 'application/javascript'
       ctx.body = fs.createReadStream(path.join(__dirname, 'index.js'))
     })
@@ -154,7 +154,7 @@ describe('Compress', function () {
     request(app.listen())
     .get('/')
     .expect(200)
-    .end(function (err, res) {
+    .end((err, res) => {
       if (err)
         return done(err)
 
@@ -167,7 +167,7 @@ describe('Compress', function () {
     })
   })
 
-  it('should compress when ctx.compress === true', function (done) {
+  it('should compress when ctx.compress === true', (done) => {
     var app = new Koa()
 
     app.use(compress())
@@ -176,7 +176,7 @@ describe('Compress', function () {
     request(app.listen())
     .get('/')
     .expect(200)
-    .end(function (err, res) {
+    .end((err, res) => {
       if (err)
         return done(err)
 
@@ -189,11 +189,11 @@ describe('Compress', function () {
     })
   })
 
-  it('should not compress when ctx.compress === false', function (done) {
+  it('should not compress when ctx.compress === false', (done) => {
     var app = new Koa()
 
     app.use(compress())
-    app.use(function (ctx, next) {
+    app.use((ctx, next) => {
       ctx.compress = false
       ctx.body = buffer
     })
@@ -201,7 +201,7 @@ describe('Compress', function () {
     request(app.listen())
     .get('/')
     .expect(200)
-    .end(function (err, res) {
+    .end((err, res) => {
       if (err)
         return done(err)
 
@@ -214,7 +214,7 @@ describe('Compress', function () {
     })
   })
 
-  it('should not compress HEAD requests', function (done) {
+  it('should not compress HEAD requests', (done) => {
     var app = new Koa()
 
     app.use(compress())
@@ -223,7 +223,7 @@ describe('Compress', function () {
     request(app.listen())
     .head('/')
     .expect(200)
-    .expect('', function (err, res) {
+    .expect('', (err, res) => {
       if (err)
         return done(err)
 
@@ -233,7 +233,7 @@ describe('Compress', function () {
     })
   })
 
-  it('should not crash even if accept-encoding: sdch', function (done) {
+  it('should not crash even if accept-encoding: sdch', (done) => {
     var app = new Koa()
 
     app.use(compress())
@@ -245,7 +245,7 @@ describe('Compress', function () {
     .expect(200, done)
   })
 
-  it('should not crash if no accept-encoding is sent', function (done) {
+  it('should not crash if no accept-encoding is sent', (done) => {
     var app = new Koa()
 
     app.use(compress())
@@ -256,11 +256,11 @@ describe('Compress', function () {
     .expect(200, done)
   })
 
-  it('should not crash if a type does not pass the filter', function (done) {
+  it('should not crash if a type does not pass the filter', (done) => {
     var app = new Koa()
 
     app.use(compress())
-    app.use(function (ctx) {
+    app.use((ctx) => {
       ctx.type = 'image/png'
       ctx.body = new Buffer(2048)
     })
@@ -270,13 +270,13 @@ describe('Compress', function () {
     .expect(200, done)
   })
 
-  it('should not compress when transfer-encoding is already set', function (done) {
+  it('should not compress when transfer-encoding is already set', (done) => {
     var app = new Koa()
 
     app.use(compress({
       threshold: 0
     }))
-    app.use(function (ctx) {
+    app.use((ctx) => {
       ctx.set('Content-Encoding', 'identity')
       ctx.type = 'text'
       ctx.body = 'asdf'

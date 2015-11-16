@@ -28,7 +28,7 @@ var encodingMethods = {
  * @api public
  */
 
-module.exports = function (options) {
+module.exports = (options) => {
   options = options || {}
 
   var filter = options.filter || compressible
@@ -41,7 +41,7 @@ module.exports = function (options) {
   return function compress(ctx, next) {
     ctx.vary('Accept-Encoding')
 
-    return next().then(function () {
+    return next().then(() => {
       var body = ctx.body
       if (!body) return
       if (ctx.compress === false) return
