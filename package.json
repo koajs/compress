@@ -14,14 +14,14 @@
     "statuses": "1",
     "koa-is-json": "1",
     "compressible": "2",
-    "bytes": "1"
+    "bytes": "2.2.0"
   },
   "devDependencies": {
     "istanbul-harmony": "0",
-    "koa": "0",
-    "mocha": "1",
-    "should": "3",
-    "supertest": "0"
+    "koa": "1.1.2",
+    "mocha": "2.3.4",
+    "should": "8.0.2",
+    "supertest": "1.1.0"
   },
   "scripts": {
     "test": "NODE_ENV=test mocha --harmony-generators --require should --reporter spec",
