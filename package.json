@@ -1,7 +1,7 @@
 {
   "name": "koa-compress",
   "description": "Compress middleware for koa",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "author": {
     "name": "Jonathan Ong",
     "email": "me@jongleberry.com",
