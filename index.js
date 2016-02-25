@@ -1,3 +1,5 @@
+'use strict';
+
 /**
  * Module dependencies.
  */
@@ -26,7 +28,7 @@ var encodingMethods = {
  * @api public
  */
 
-module.exports = function (options) {
+module.exports = (options) => {
   options = options || {}
 
   var filter = options.filter || compressible
@@ -36,42 +38,42 @@ module.exports = function (options) {
     : typeof options.threshold === 'string' ? bytes(options.threshold)
     : 1024
 
-  return function* compress(next) {
-    this.vary('Accept-Encoding')
+  return function compress(ctx, next) {
+    ctx.vary('Accept-Encoding')
 
-    yield* next
+    return next().then(() => {
+      var body = ctx.body
+      if (!body) return
+      if (ctx.compress === false) return
+      if (ctx.request.method === 'HEAD') return
+      if (status.empty[ctx.response.status]) return
+      if (ctx.response.get('Content-Encoding')) return
 
-    var body = this.body
-    if (!body) return
-    if (this.compress === false) return
-    if (this.request.method === 'HEAD') return
-    if (status.empty[this.response.status]) return
-    if (this.response.get('Content-Encoding')) return
+      // forced compression or implied
+      if (!(ctx.compress === true || filter(ctx.response.type))) return
 
-    // forced compression or implied
-    if (!(this.compress === true || filter(this.response.type))) return
+      // identity
+      var encoding = ctx.acceptsEncodings('gzip', 'deflate', 'identity')
+      if (!encoding) ctx.throw(406, 'supported encodings: gzip, deflate, identity')
+      if (encoding === 'identity') return
 
-    // identity
-    var encoding = this.acceptsEncodings('gzip', 'deflate', 'identity')
-    if (!encoding) this.throw(406, 'supported encodings: gzip, deflate, identity')
-    if (encoding === 'identity') return
+      // json
+      if (isJSON(body)) body = ctx.body = JSON.stringify(body)
 
-    // json
-    if (isJSON(body)) body = this.body = JSON.stringify(body)
+      // threshold
+      if (threshold && ctx.response.length < threshold) return
 
-    // threshold
-    if (threshold && this.response.length < threshold) return
+      ctx.set('Content-Encoding', encoding)
+      ctx.res.removeHeader('Content-Length')
 
-    this.set('Content-Encoding', encoding)
-    this.res.removeHeader('Content-Length')
+      var stream =
+      ctx.body = encodingMethods[encoding](options)
 
-    var stream =
-    this.body = encodingMethods[encoding](options)
-
-    if (body instanceof Stream) {
-      body.pipe(stream)
-    } else {
-      stream.end(body)
-    }
-  }
+      if (body instanceof Stream) {
+        body.pipe(stream)
+      } else {
+        stream.end(body)
+      }
+    });
+  };
 }

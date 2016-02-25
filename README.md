@@ -6,9 +6,9 @@ Compress middleware for Koa
 
 ```js
 var compress = require('koa-compress')
-var koa = require('koa')
+var Koa = require('koa')
 
-var app = koa()
+var app = new Koa()
 app.use(compress({
   filter: function (content_type) {
   	return /text/i.test(content_type)
@@ -39,10 +39,8 @@ You can always disable compression by setting `this.compress = false`.
 This bypasses the filter check.
 
 ```js
-app.use(function (next) {
-  return function *() {
-    this.compress = true
-    this.body = fs.createReadStream(file)
-  }
+app.use((ctx, next) => {
+  ctx.compress = true
+  ctx.body = fs.createReadStream(file)
 })
 ```
