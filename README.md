@@ -2,6 +2,8 @@
 
 Compress middleware for Koa
 
+Install `v1.x` for Koa v1. Install `v2.x` or `next` for Koa v2.
+
 ## Example
 
 ```js
