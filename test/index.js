@@ -8,6 +8,8 @@ var fs = require('fs')
 var path = require('path')
 var compress = require('..')
 
+require("should-http")
+
 describe('Compress', function () {
   var buffer = crypto.randomBytes(1024)
   var string = buffer.toString('hex')
