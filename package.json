@@ -22,7 +22,7 @@
     "mocha": "^2.4.1",
     "should": "^10.0.0",
     "should-http": "0.0.4",
-    "supertest": "^1.2.0"
+    "supertest": "^2.0.0"
   },
   "scripts": {
     "test": "NODE_ENV=test mocha --require should --reporter spec",
