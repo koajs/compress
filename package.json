@@ -12,7 +12,7 @@
   "repository": "koajs/compress",
   "dependencies": {
     "bytes": "^2.3.0",
-    "compressible": "^2.0.0",
+    "compressible": "^2.0.9",
     "koa-is-json": "^1.0.0",
     "statuses": "^1.0.0"
   },
