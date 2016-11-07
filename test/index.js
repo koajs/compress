@@ -225,7 +225,7 @@ describe('Compress', function () {
     request(app.listen())
     .head('/')
     .expect(200)
-    .expect('', function (err, res) {
+    .end(function (err, res) {
       if (err)
         return done(err)
 
