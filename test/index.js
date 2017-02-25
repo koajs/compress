@@ -224,8 +224,7 @@ describe('Compress', () => {
 
     request(app.listen())
     .head('/')
-    .expect(200)
-    .expect('', (err, res) => {
+    .expect(200, (err, res) => {
       if (err)
         return done(err)
 
