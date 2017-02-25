@@ -18,7 +18,7 @@
   },
   "devDependencies": {
     "istanbul": "^0.4.2",
-    "koa": "^1.0.0",
+    "koa": "^2.0.1",
     "mocha": "^3.1.2",
     "should": "^10.0.0",
     "should-http": "0.0.4",
