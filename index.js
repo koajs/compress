@@ -27,15 +27,15 @@ const encodingMethods = {
  */
 
 module.exports = (options = {}) => {
-  let { filter = compressible, threshold = 1024 } = options;
-  if (typeof threshold === 'string') threshold = bytes(threshold);
+  let { filter = compressible, threshold = 1024 } = options
+  if (typeof threshold === 'string') threshold = bytes(threshold)
 
   return async (ctx, next) => {
     ctx.vary('Accept-Encoding')
 
     await next()
     
-    let { body } = ctx;
+    let { body } = ctx
     if (!body) return
     if (ctx.compress === false) return
     if (ctx.request.method === 'HEAD') return
