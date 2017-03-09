@@ -20,7 +20,7 @@
     "istanbul": "^0.4.2",
     "koa": "^2.0.1",
     "mocha": "^2.4.1",
-    "should": "^9.0.2",
+    "should": "^11.2.1",
     "should-http": "0.0.4",
     "supertest": "^3.0.0"
   },
