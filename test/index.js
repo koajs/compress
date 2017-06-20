@@ -6,6 +6,7 @@ var Stream = require('stream')
 var crypto = require('crypto')
 var fs = require('fs')
 var path = require('path')
+var zlib = require('zlib')
 var compress = require('..')
 
 require('should-http')
@@ -286,5 +287,30 @@ describe('Compress', () => {
     request(app.listen())
     .get('/')
     .expect('asdf', done)
+  })
+
+  it('should support Z_SYNC_FLUSH', (done) => {
+    var app = new Koa()
+
+    app.use(compress({
+      flush: zlib.Z_SYNC_FLUSH
+    }))
+    app.use(sendString)
+
+    request(app.listen())
+    .get('/')
+    .expect(200)
+    .end((err, res) => {
+      if (err)
+        return done(err)
+
+      //res.should.have.header('Content-Encoding', 'gzip')
+      res.should.have.header('Transfer-Encoding', 'chunked')
+      res.should.have.header('Vary', 'Accept-Encoding')
+      res.headers.should.not.have.property('content-length')
+      res.text.should.equal(string)
+
+      done()
+    })
   })
 })
