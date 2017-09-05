@@ -1,4 +1,7 @@
-# Koa Compress [![Build Status](https://travis-ci.org/koajs/compress.png)](https://travis-ci.org/koajs/compress)
+# Koa Compress 
+
+[![Build Status](https://travis-ci.org/koajs/compress.png)](https://travis-ci.org/koajs/compress)
+[![Greenkeeper badge](https://badges.greenkeeper.io/koajs/compress.svg)](https://greenkeeper.io/)
 
 Compress middleware for Koa
 
