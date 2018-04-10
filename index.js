@@ -39,6 +39,7 @@ module.exports = (options = {}) => {
 
     let { body } = ctx
     if (!body) return
+    if (ctx.res.headersSent || !ctx.writable) return
     if (ctx.compress === false) return
     if (ctx.request.method === 'HEAD') return
     if (status.empty[ctx.response.status]) return
