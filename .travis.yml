@@ -3,4 +3,4 @@ node_js:
 - 8
 language: node_js
 script: "npm run test-travis"
-after_script: "npm install coveralls@2.10.0 && cat ./coverage/lcov.info | coveralls"
+after_script: "npx codecov"
