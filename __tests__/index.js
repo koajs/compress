@@ -1,16 +1,16 @@
-var request = require('supertest')
-var Koa = require('koa')
-var crypto = require('crypto')
-var fs = require('fs')
-var path = require('path')
-var zlib = require('zlib')
-var compress = require('..')
+const request = require('supertest')
+const assert = require('assert')
+const crypto = require('crypto')
+const path = require('path')
+const zlib = require('zlib')
+const Koa = require('koa')
+const fs = require('fs')
 
-require('should-http')
+const compress = require('..')
 
 describe('Compress', () => {
-  var buffer = crypto.randomBytes(1024)
-  var string = buffer.toString('hex')
+  const buffer = crypto.randomBytes(1024)
+  const string = buffer.toString('hex')
 
   function sendString (ctx, next) {
     ctx.body = string
@@ -22,7 +22,7 @@ describe('Compress', () => {
   }
 
   it('should compress strings', (done) => {
-    var app = new Koa()
+    const app = new Koa()
 
     app.use(compress())
     app.use(sendString)
@@ -33,18 +33,17 @@ describe('Compress', () => {
       .end((err, res) => {
         if (err) { return done(err) }
 
-        // res.should.have.header('Content-Encoding', 'gzip')
-        res.should.have.header('Transfer-Encoding', 'chunked')
-        res.should.have.header('Vary', 'Accept-Encoding')
-        res.headers.should.not.have.property('content-length')
-        res.text.should.equal(string)
+        assert.equal(res.headers['transfer-encoding'], 'chunked')
+        assert.equal(res.headers.vary, 'Accept-Encoding')
+        assert(!res.headers['content-length'])
+        assert.equal(res.text, string)
 
         done()
       })
   })
 
   it('should not compress strings below threshold', (done) => {
-    var app = new Koa()
+    const app = new Koa()
 
     app.use(compress({
       threshold: '1mb'
@@ -57,19 +56,19 @@ describe('Compress', () => {
       .end((err, res) => {
         if (err) { return done(err) }
 
-        res.should.have.header('Content-Length', '2048')
-        res.should.have.header('Vary', 'Accept-Encoding')
-        res.headers.should.not.have.property('content-encoding')
-        res.headers.should.not.have.property('transfer-encoding')
-        res.text.should.equal(string)
+        assert.equal(res.headers['content-length'], '2048')
+        assert.equal(res.headers.vary, 'Accept-Encoding')
+        assert(!res.headers['content-encoding'])
+        assert(!res.headers['transfer-encoding'])
+        assert.equal(res.text, string)
 
         done()
       })
   })
 
   it('should compress JSON body', (done) => {
-    var app = new Koa()
-    var jsonBody = { 'status': 200, 'message': 'ok', 'data': string }
+    const app = new Koa()
+    const jsonBody = { 'status': 200, 'message': 'ok', 'data': string }
 
     app.use(compress())
     app.use((ctx, next) => {
@@ -82,18 +81,18 @@ describe('Compress', () => {
       .end((err, res) => {
         if (err) { return done(err) }
 
-        res.should.have.header('Transfer-Encoding', 'chunked')
-        res.should.have.header('Vary', 'Accept-Encoding')
-        res.headers.should.not.have.property('content-length')
-        res.text.should.equal(JSON.stringify(jsonBody))
+        assert.equal(res.headers['transfer-encoding'], 'chunked')
+        assert.equal(res.headers.vary, 'Accept-Encoding')
+        assert(!res.headers['content-length'])
+        assert.equal(res.text, JSON.stringify(jsonBody))
 
         done()
       })
   })
 
   it('should not compress JSON body below threshold', (done) => {
-    var app = new Koa()
-    var jsonBody = { 'status': 200, 'message': 'ok' }
+    const app = new Koa()
+    const jsonBody = { 'status': 200, 'message': 'ok' }
 
     app.use(compress())
     app.use((ctx, next) => {
@@ -106,17 +105,17 @@ describe('Compress', () => {
       .end((err, res) => {
         if (err) { return done(err) }
 
-        res.should.have.header('Vary', 'Accept-Encoding')
-        res.headers.should.not.have.property('content-encoding')
-        res.headers.should.not.have.property('transfer-encoding')
-        res.text.should.equal(JSON.stringify(jsonBody))
+        assert.equal(res.headers.vary, 'Accept-Encoding')
+        assert(!res.headers['content-encoding'])
+        assert(!res.headers['transfer-encoding'])
+        assert.equal(res.text, JSON.stringify(jsonBody))
 
         done()
       })
   })
 
   it('should compress buffers', (done) => {
-    var app = new Koa()
+    const app = new Koa()
 
     app.use(compress())
     app.use(sendBuffer)
@@ -127,17 +126,16 @@ describe('Compress', () => {
       .end((err, res) => {
         if (err) { return done(err) }
 
-        // res.should.have.header('Content-Encoding', 'gzip')
-        res.should.have.header('Transfer-Encoding', 'chunked')
-        res.should.have.header('Vary', 'Accept-Encoding')
-        res.headers.should.not.have.property('content-length')
+        assert.equal(res.headers['transfer-encoding'], 'chunked')
+        assert.equal(res.headers.vary, 'Accept-Encoding')
+        assert(!res.headers['content-length'])
 
         done()
       })
   })
 
   it('should compress streams', (done) => {
-    var app = new Koa()
+    const app = new Koa()
 
     app.use(compress())
 
@@ -153,16 +151,16 @@ describe('Compress', () => {
         if (err) { return done(err) }
 
         // res.should.have.header('Content-Encoding', 'gzip')
-        res.should.have.header('Transfer-Encoding', 'chunked')
-        res.should.have.header('Vary', 'Accept-Encoding')
-        res.headers.should.not.have.property('content-length')
+        assert.equal(res.headers['transfer-encoding'], 'chunked')
+        assert.equal(res.headers.vary, 'Accept-Encoding')
+        assert(!res.headers['content-length'])
 
         done()
       })
   })
 
   it('should compress when ctx.compress === true', (done) => {
-    var app = new Koa()
+    const app = new Koa()
 
     app.use(compress())
     app.use(sendBuffer)
@@ -173,17 +171,16 @@ describe('Compress', () => {
       .end((err, res) => {
         if (err) { return done(err) }
 
-        // res.should.have.header('Content-Encoding', 'gzip')
-        res.should.have.header('Transfer-Encoding', 'chunked')
-        res.should.have.header('Vary', 'Accept-Encoding')
-        res.headers.should.not.have.property('content-length')
+        assert.equal(res.headers['transfer-encoding'], 'chunked')
+        assert.equal(res.headers.vary, 'Accept-Encoding')
+        assert(!res.headers['content-length'])
 
         done()
       })
   })
 
   it('should not compress when ctx.compress === false', (done) => {
-    var app = new Koa()
+    const app = new Koa()
 
     app.use(compress())
     app.use((ctx, next) => {
@@ -197,17 +194,17 @@ describe('Compress', () => {
       .end((err, res) => {
         if (err) { return done(err) }
 
-        res.should.have.header('Content-Length', '1024')
-        res.should.have.header('Vary', 'Accept-Encoding')
-        res.headers.should.not.have.property('content-encoding')
-        res.headers.should.not.have.property('transfer-encoding')
+        assert.equal(res.headers['content-length'], '1024')
+        assert.equal(res.headers.vary, 'Accept-Encoding')
+        assert(!res.headers['content-encoding'])
+        assert(!res.headers['transfer-encoding'])
 
         done()
       })
   })
 
   it('should not compress HEAD requests', (done) => {
-    var app = new Koa()
+    const app = new Koa()
 
     app.use(compress())
     app.use(sendString)
@@ -217,14 +214,14 @@ describe('Compress', () => {
       .expect(200, (err, res) => {
         if (err) { return done(err) }
 
-        res.headers.should.not.have.property('content-encoding')
+        assert(!res.headers['content-encoding'])
 
         done()
       })
   })
 
   it('should not crash even if accept-encoding: sdch', (done) => {
-    var app = new Koa()
+    const app = new Koa()
 
     app.use(compress())
     app.use(sendBuffer)
@@ -236,7 +233,7 @@ describe('Compress', () => {
   })
 
   it('should not crash if no accept-encoding is sent', (done) => {
-    var app = new Koa()
+    const app = new Koa()
 
     app.use(compress())
     app.use(sendBuffer)
@@ -247,12 +244,12 @@ describe('Compress', () => {
   })
 
   it('should not crash if a type does not pass the filter', (done) => {
-    var app = new Koa()
+    const app = new Koa()
 
     app.use(compress())
     app.use((ctx) => {
       ctx.type = 'image/png'
-      ctx.body = Buffer.from(2048)
+      ctx.body = Buffer.alloc(2048)
     })
 
     request(app.listen())
@@ -261,7 +258,7 @@ describe('Compress', () => {
   })
 
   it('should not compress when transfer-encoding is already set', (done) => {
-    var app = new Koa()
+    const app = new Koa()
 
     app.use(compress({
       threshold: 0
@@ -278,7 +275,7 @@ describe('Compress', () => {
   })
 
   it('should support Z_SYNC_FLUSH', (done) => {
-    var app = new Koa()
+    const app = new Koa()
 
     app.use(compress({
       flush: zlib.Z_SYNC_FLUSH
@@ -292,10 +289,10 @@ describe('Compress', () => {
         if (err) { return done(err) }
 
         // res.should.have.header('Content-Encoding', 'gzip')
-        res.should.have.header('Transfer-Encoding', 'chunked')
-        res.should.have.header('Vary', 'Accept-Encoding')
-        res.headers.should.not.have.property('content-length')
-        res.text.should.equal(string)
+        assert.equal(res.headers['transfer-encoding'], 'chunked')
+        assert.equal(res.headers.vary, 'Accept-Encoding')
+        assert(!res.headers['content-length'])
+        assert.equal(res.text, string)
 
         done()
       })

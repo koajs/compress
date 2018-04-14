@@ -17,7 +17,6 @@
     "statuses": "^1.0.0"
   },
   "devDependencies": {
-    "istanbul": "^0.4.2",
     "eslint": "^4.19.0",
     "eslint-config-standard": "^11.0.0",
     "eslint-config-standard-react": "^6.0.0",
@@ -27,21 +26,20 @@
     "eslint-plugin-promise": "^3.7.0",
     "eslint-plugin-react": "^7.7.0",
     "eslint-plugin-standard": "^3.0.1",
+    "jest": "^22.4.3",
     "koa": "^2.0.1",
-    "mocha": "^3.5.0",
-    "should": "^13.0.1",
-    "should-http": "0.1.1",
     "supertest": "^3.0.0"
   },
   "scripts": {
-    "eslint": "eslint .",
-    "test": "NODE_ENV=test mocha --require should --reporter spec",
-    "test-cov": "NODE_ENV=test node ./node_modules/.bin/istanbul cover ./node_modules/.bin/_mocha -- --require should",
-    "test-travis": "NODE_ENV=test node ./node_modules/.bin/istanbul cover ./node_modules/.bin/_mocha --report lcovonly -- --require should"
+    "eslint": "eslint --ignore-path .gitignore .",
+    "test": "jest --forceExit"
   },
   "files": [
     "index.js",
     "LICENSE",
     "HISTORY.md"
-  ]
+  ],
+  "jest": {
+    "testEnvironment": "node"
+  }
 }
