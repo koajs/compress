@@ -1,9 +1,16 @@
 
+2.1.0 / 2018-04-13
+==================
+
+ * do not compress if the response is not writable
+ * switch testing frameworks to jest
+ * implement linting
+
 1.0.8 / 2014-09-14
 ==================
 
  * bump compressible
- 
+
 1.0.7 / 2014-05-13
 ==================
 
