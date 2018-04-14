@@ -1,8 +1,5 @@
 var request = require('supertest')
-var assert = require('assert')
-var http = require('http')
 var Koa = require('koa')
-var Stream = require('stream')
 var crypto = require('crypto')
 var fs = require('fs')
 var path = require('path')
@@ -15,11 +12,11 @@ describe('Compress', () => {
   var buffer = crypto.randomBytes(1024)
   var string = buffer.toString('hex')
 
-  function sendString(ctx, next) {
+  function sendString (ctx, next) {
     ctx.body = string
   }
 
-  function sendBuffer(ctx, next) {
+  function sendBuffer (ctx, next) {
     ctx.compress = true
     ctx.body = buffer
   }
@@ -31,20 +28,19 @@ describe('Compress', () => {
     app.use(sendString)
 
     request(app.listen())
-    .get('/')
-    .expect(200)
-    .end((err, res) => {
-      if (err)
-        return done(err)
+      .get('/')
+      .expect(200)
+      .end((err, res) => {
+        if (err) { return done(err) }
 
-      //res.should.have.header('Content-Encoding', 'gzip')
-      res.should.have.header('Transfer-Encoding', 'chunked')
-      res.should.have.header('Vary', 'Accept-Encoding')
-      res.headers.should.not.have.property('content-length')
-      res.text.should.equal(string)
+        // res.should.have.header('Content-Encoding', 'gzip')
+        res.should.have.header('Transfer-Encoding', 'chunked')
+        res.should.have.header('Vary', 'Accept-Encoding')
+        res.headers.should.not.have.property('content-length')
+        res.text.should.equal(string)
 
-      done()
-    })
+        done()
+      })
   })
 
   it('should not compress strings below threshold', (done) => {
@@ -56,20 +52,19 @@ describe('Compress', () => {
     app.use(sendString)
 
     request(app.listen())
-    .get('/')
-    .expect(200)
-    .end((err, res) => {
-      if (err)
-        return done(err)
+      .get('/')
+      .expect(200)
+      .end((err, res) => {
+        if (err) { return done(err) }
 
-      res.should.have.header('Content-Length', '2048')
-      res.should.have.header('Vary', 'Accept-Encoding')
-      res.headers.should.not.have.property('content-encoding')
-      res.headers.should.not.have.property('transfer-encoding')
-      res.text.should.equal(string)
+        res.should.have.header('Content-Length', '2048')
+        res.should.have.header('Vary', 'Accept-Encoding')
+        res.headers.should.not.have.property('content-encoding')
+        res.headers.should.not.have.property('transfer-encoding')
+        res.text.should.equal(string)
 
-      done()
-    })
+        done()
+      })
   })
 
   it('should compress JSON body', (done) => {
@@ -82,19 +77,18 @@ describe('Compress', () => {
     })
 
     request(app.listen())
-    .get('/')
-    .expect(200)
-    .end((err, res) => {
-      if (err)
-        return done(err)
+      .get('/')
+      .expect(200)
+      .end((err, res) => {
+        if (err) { return done(err) }
 
-      res.should.have.header('Transfer-Encoding', 'chunked')
-      res.should.have.header('Vary', 'Accept-Encoding')
-      res.headers.should.not.have.property('content-length')
-      res.text.should.equal(JSON.stringify(jsonBody))
+        res.should.have.header('Transfer-Encoding', 'chunked')
+        res.should.have.header('Vary', 'Accept-Encoding')
+        res.headers.should.not.have.property('content-length')
+        res.text.should.equal(JSON.stringify(jsonBody))
 
-      done()
-    })
+        done()
+      })
   })
 
   it('should not compress JSON body below threshold', (done) => {
@@ -107,19 +101,18 @@ describe('Compress', () => {
     })
 
     request(app.listen())
-    .get('/')
-    .expect(200)
-    .end((err, res) => {
-      if (err)
-        return done(err)
+      .get('/')
+      .expect(200)
+      .end((err, res) => {
+        if (err) { return done(err) }
 
-      res.should.have.header('Vary', 'Accept-Encoding')
-      res.headers.should.not.have.property('content-encoding')
-      res.headers.should.not.have.property('transfer-encoding')
-      res.text.should.equal(JSON.stringify(jsonBody))
+        res.should.have.header('Vary', 'Accept-Encoding')
+        res.headers.should.not.have.property('content-encoding')
+        res.headers.should.not.have.property('transfer-encoding')
+        res.text.should.equal(JSON.stringify(jsonBody))
 
-      done()
-    })
+        done()
+      })
   })
 
   it('should compress buffers', (done) => {
@@ -129,19 +122,18 @@ describe('Compress', () => {
     app.use(sendBuffer)
 
     request(app.listen())
-    .get('/')
-    .expect(200)
-    .end((err, res) => {
-      if (err)
-        return done(err)
+      .get('/')
+      .expect(200)
+      .end((err, res) => {
+        if (err) { return done(err) }
 
-      //res.should.have.header('Content-Encoding', 'gzip')
-      res.should.have.header('Transfer-Encoding', 'chunked')
-      res.should.have.header('Vary', 'Accept-Encoding')
-      res.headers.should.not.have.property('content-length')
+        // res.should.have.header('Content-Encoding', 'gzip')
+        res.should.have.header('Transfer-Encoding', 'chunked')
+        res.should.have.header('Vary', 'Accept-Encoding')
+        res.headers.should.not.have.property('content-length')
 
-      done()
-    })
+        done()
+      })
   })
 
   it('should compress streams', (done) => {
@@ -155,19 +147,18 @@ describe('Compress', () => {
     })
 
     request(app.listen())
-    .get('/')
-    .expect(200)
-    .end((err, res) => {
-      if (err)
-        return done(err)
+      .get('/')
+      .expect(200)
+      .end((err, res) => {
+        if (err) { return done(err) }
 
-      //res.should.have.header('Content-Encoding', 'gzip')
-      res.should.have.header('Transfer-Encoding', 'chunked')
-      res.should.have.header('Vary', 'Accept-Encoding')
-      res.headers.should.not.have.property('content-length')
+        // res.should.have.header('Content-Encoding', 'gzip')
+        res.should.have.header('Transfer-Encoding', 'chunked')
+        res.should.have.header('Vary', 'Accept-Encoding')
+        res.headers.should.not.have.property('content-length')
 
-      done()
-    })
+        done()
+      })
   })
 
   it('should compress when ctx.compress === true', (done) => {
@@ -177,19 +168,18 @@ describe('Compress', () => {
     app.use(sendBuffer)
 
     request(app.listen())
-    .get('/')
-    .expect(200)
-    .end((err, res) => {
-      if (err)
-        return done(err)
+      .get('/')
+      .expect(200)
+      .end((err, res) => {
+        if (err) { return done(err) }
 
-      //res.should.have.header('Content-Encoding', 'gzip')
-      res.should.have.header('Transfer-Encoding', 'chunked')
-      res.should.have.header('Vary', 'Accept-Encoding')
-      res.headers.should.not.have.property('content-length')
+        // res.should.have.header('Content-Encoding', 'gzip')
+        res.should.have.header('Transfer-Encoding', 'chunked')
+        res.should.have.header('Vary', 'Accept-Encoding')
+        res.headers.should.not.have.property('content-length')
 
-      done()
-    })
+        done()
+      })
   })
 
   it('should not compress when ctx.compress === false', (done) => {
@@ -202,19 +192,18 @@ describe('Compress', () => {
     })
 
     request(app.listen())
-    .get('/')
-    .expect(200)
-    .end((err, res) => {
-      if (err)
-        return done(err)
+      .get('/')
+      .expect(200)
+      .end((err, res) => {
+        if (err) { return done(err) }
 
-      res.should.have.header('Content-Length', '1024')
-      res.should.have.header('Vary', 'Accept-Encoding')
-      res.headers.should.not.have.property('content-encoding')
-      res.headers.should.not.have.property('transfer-encoding')
+        res.should.have.header('Content-Length', '1024')
+        res.should.have.header('Vary', 'Accept-Encoding')
+        res.headers.should.not.have.property('content-encoding')
+        res.headers.should.not.have.property('transfer-encoding')
 
-      done()
-    })
+        done()
+      })
   })
 
   it('should not compress HEAD requests', (done) => {
@@ -224,15 +213,14 @@ describe('Compress', () => {
     app.use(sendString)
 
     request(app.listen())
-    .head('/')
-    .expect(200, (err, res) => {
-      if (err)
-        return done(err)
+      .head('/')
+      .expect(200, (err, res) => {
+        if (err) { return done(err) }
 
-      res.headers.should.not.have.property('content-encoding')
+        res.headers.should.not.have.property('content-encoding')
 
-      done()
-    })
+        done()
+      })
   })
 
   it('should not crash even if accept-encoding: sdch', (done) => {
@@ -242,9 +230,9 @@ describe('Compress', () => {
     app.use(sendBuffer)
 
     request(app.listen())
-    .get('/')
-    .set('Accept-Encoding', 'sdch, gzip, deflate')
-    .expect(200, done)
+      .get('/')
+      .set('Accept-Encoding', 'sdch, gzip, deflate')
+      .expect(200, done)
   })
 
   it('should not crash if no accept-encoding is sent', (done) => {
@@ -254,8 +242,8 @@ describe('Compress', () => {
     app.use(sendBuffer)
 
     request(app.listen())
-    .get('/')
-    .expect(200, done)
+      .get('/')
+      .expect(200, done)
   })
 
   it('should not crash if a type does not pass the filter', (done) => {
@@ -264,12 +252,12 @@ describe('Compress', () => {
     app.use(compress())
     app.use((ctx) => {
       ctx.type = 'image/png'
-      ctx.body = new Buffer(2048)
+      ctx.body = Buffer.from(2048)
     })
 
     request(app.listen())
-    .get('/')
-    .expect(200, done)
+      .get('/')
+      .expect(200, done)
   })
 
   it('should not compress when transfer-encoding is already set', (done) => {
@@ -285,8 +273,8 @@ describe('Compress', () => {
     })
 
     request(app.listen())
-    .get('/')
-    .expect('asdf', done)
+      .get('/')
+      .expect('asdf', done)
   })
 
   it('should support Z_SYNC_FLUSH', (done) => {
@@ -298,19 +286,18 @@ describe('Compress', () => {
     app.use(sendString)
 
     request(app.listen())
-    .get('/')
-    .expect(200)
-    .end((err, res) => {
-      if (err)
-        return done(err)
+      .get('/')
+      .expect(200)
+      .end((err, res) => {
+        if (err) { return done(err) }
 
-      //res.should.have.header('Content-Encoding', 'gzip')
-      res.should.have.header('Transfer-Encoding', 'chunked')
-      res.should.have.header('Vary', 'Accept-Encoding')
-      res.headers.should.not.have.property('content-length')
-      res.text.should.equal(string)
+        // res.should.have.header('Content-Encoding', 'gzip')
+        res.should.have.header('Transfer-Encoding', 'chunked')
+        res.should.have.header('Vary', 'Accept-Encoding')
+        res.headers.should.not.have.property('content-length')
+        res.text.should.equal(string)
 
-      done()
-    })
+        done()
+      })
   })
 })
