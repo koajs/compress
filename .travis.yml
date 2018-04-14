@@ -6,3 +6,4 @@ script:
   - npm run eslint
   - npm run test -- --coverage
 after_script: "npx codecov"
+sudo: false
