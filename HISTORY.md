@@ -1,5 +1,10 @@
 
-2.1.0 / 2018-04-13
+3.0.0 / 2018-04-14
+==================
+
+ * republish 2.1.0 as it switches to async functions
+
+2.1.0 / 2018-04-13 (unpublished)
 ==================
 
  * do not compress if the response is not writable
