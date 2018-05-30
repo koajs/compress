@@ -21,6 +21,11 @@ const encodingMethods = {
 }
 
 /**
+* Regex to match no-transform directive in a cache-control header
+*/
+const NO_TRANSFORM_REGEX = /(?:^|,)\s*?no-transform\s*?(?:,|$)/
+
+/**
  * Compress middleware.
  *
  * @param {Object} [options]
@@ -47,6 +52,11 @@ module.exports = (options = {}) => {
 
     // forced compression or implied
     if (!(ctx.compress === true || filter(ctx.response.type))) return
+
+    // Don't compress for Cache-Control: no-transform
+    // https://tools.ietf.org/html/rfc7234#section-5.2.1.6
+    const cacheControl = ctx.response.get('Cache-Control')
+    if (cacheControl && NO_TRANSFORM_REGEX.test(cacheControl)) return
 
     // identity
     const encoding = ctx.acceptsEncodings('gzip', 'deflate', 'identity')
