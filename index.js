@@ -1,24 +1,24 @@
-"use strict";
+'use strict'
 
 /**
  * Module dependencies.
  */
 
-const compressible = require("compressible");
-const isJSON = require("koa-is-json");
-const status = require("statuses");
-const Stream = require("stream");
-const bytes = require("bytes");
-const zlib = require("zlib");
+const compressible = require('compressible')
+const isJSON = require('koa-is-json')
+const status = require('statuses')
+const Stream = require('stream')
+const bytes = require('bytes')
+const zlib = require('zlib')
 
 // optional dependency
-const brotli = (function() {
+const brotli = (function () {
   try {
-    return require("iltorb");
+    return require('iltorb')
   } catch (error) {
-    return null;
+    return null
   }
-})();
+})()
 
 /**
  * Encoding methods supported.
@@ -28,7 +28,7 @@ const encodingMethods = {
   gzip: zlib.createGzip,
   deflate: zlib.createDeflate,
   br: brotli.compressStream
-};
+}
 
 /**
  * Compress middleware.
@@ -39,57 +39,56 @@ const encodingMethods = {
  */
 
 module.exports = (options = {}) => {
-  let { filter = compressible, threshold = 1024 } = options;
-  if (typeof threshold === "string") threshold = bytes(threshold);
+  let { filter = compressible, threshold = 1024 } = options
+  if (typeof threshold === 'string') threshold = bytes(threshold)
 
   return async (ctx, next) => {
-    ctx.vary("Accept-Encoding");
+    ctx.vary('Accept-Encoding')
 
-    await next();
+    await next()
 
-    let { body } = ctx;
-    if (!body) return;
-    if (ctx.res.headersSent || !ctx.writable) return;
-    if (ctx.compress === false) return;
-    if (ctx.request.method === "HEAD") return;
-    if (status.empty[ctx.response.status]) return;
-    if (ctx.response.get("Content-Encoding")) return;
+    let { body } = ctx
+    if (!body) return
+    if (ctx.res.headersSent || !ctx.writable) return
+    if (ctx.compress === false) return
+    if (ctx.request.method === 'HEAD') return
+    if (status.empty[ctx.response.status]) return
+    if (ctx.response.get('Content-Encoding')) return
 
     // forced compression or implied
-    if (!(ctx.compress === true || filter(ctx.response.type))) return;
+    if (!(ctx.compress === true || filter(ctx.response.type))) return
 
     // identity
-    let encoding = null;
+    let encoding = null
 
     // if brotli is specified, prefer brotli
     if (brotli && options.br) {
-      encoding = ctx.acceptsEncodings("br", "identity");
+      encoding = ctx.acceptsEncodings('br', 'identity')
     }
-    if (!encoding || encoding === "identity") {
-      encoding = ctx.acceptsEncodings("gzip", "deflate", "identity");
+    if (!encoding || encoding === 'identity') {
+      encoding = ctx.acceptsEncodings('gzip', 'deflate', 'identity')
     }
 
-    if (!encoding)
-      ctx.throw(406, "supported encodings: br, gzip, deflate, identity");
-    if (encoding === "identity") return;
+    if (!encoding) { ctx.throw(406, 'supported encodings: br, gzip, deflate, identity') }
+    if (encoding === 'identity') return
 
     // json
-    if (isJSON(body)) body = ctx.body = JSON.stringify(body);
+    if (isJSON(body)) body = ctx.body = JSON.stringify(body)
 
     // threshold
-    if (threshold && ctx.response.length < threshold) return;
+    if (threshold && ctx.response.length < threshold) return
 
-    ctx.set("Content-Encoding", encoding);
-    ctx.res.removeHeader("Content-Length");
+    ctx.set('Content-Encoding', encoding)
+    ctx.res.removeHeader('Content-Length')
 
     const stream = (ctx.body = encodingMethods[encoding](
       options[encoding] || options
-    ));
+    ))
 
     if (body instanceof Stream) {
-      body.pipe(stream);
+      body.pipe(stream)
     } else {
-      stream.end(body);
+      stream.end(body)
     }
-  };
-};
+  }
+}
