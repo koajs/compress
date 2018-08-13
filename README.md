@@ -24,7 +24,18 @@ app.use(compress({
 
 ## Options
 
-The options are passed to `zlib`: http://nodejs.org/api/zlib.html#zlib_options
+### encoding
+
+`options[encoding]` values are passed to the respective library for the encoding.  If unspecified, will fallback to passing the full `options` object maintaining backwards compatability.
+
+- `options.gzip` - passed to `zlib`: http://nodejs.org/api/zlib.html#zlib_options
+- `options.deflate` - passed to `zlib`: http://nodejs.org/api/zlib.html#zlib_options
+
+#### brotli support
+
+Brotli support requires you add the optional dependency of `iltorb` as well as a `br` object under options.  It is recommended to only enable `brotli` support when using an output cache as the time may be significantly slower than `gzip`.
+
+- `options.br` - passed to `iltorb`: https://www.npmjs.com/package/iltorb#brotliencodeparams
 
 ### filter
 
