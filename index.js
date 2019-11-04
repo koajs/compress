@@ -15,10 +15,13 @@ const zlib = require('zlib')
  * Encoding methods supported.
  */
 
+const brotliSupport = !!zlib.createBrotliCompress
+
 const encodingMethods = {
   gzip: zlib.createGzip,
   deflate: zlib.createDeflate
 }
+if (brotliSupport) encodingMethods.br = zlib.createBrotliCompress
 
 /**
 * Regex to match no-transform directive in a cache-control header
@@ -34,7 +37,7 @@ const NO_TRANSFORM_REGEX = /(?:^|,)\s*?no-transform\s*?(?:,|$)/
  */
 
 module.exports = (options = {}) => {
-  let { filter = compressible, threshold = 1024 } = options
+  let { brotliOptions, filter = compressible, threshold = 1024 } = options
   if (typeof threshold === 'string') threshold = bytes(threshold)
 
   return async (ctx, next) => {
@@ -59,8 +62,10 @@ module.exports = (options = {}) => {
     if (cacheControl && NO_TRANSFORM_REGEX.test(cacheControl)) return
 
     // identity
-    const encoding = ctx.acceptsEncodings('gzip', 'deflate', 'identity')
-    if (!encoding) ctx.throw(406, 'supported encodings: gzip, deflate, identity')
+    let encoding = null
+    if (brotliSupport && brotliOptions !== null) encoding = ctx.acceptsEncodings('br') // 1st choice
+    if (!encoding) encoding = ctx.acceptsEncodings('gzip', 'deflate', 'identity')
+    if (!encoding) ctx.throw(406, 'supported encodings: br, gzip, deflate, identity')
     if (encoding === 'identity') return
 
     // json
@@ -72,7 +77,7 @@ module.exports = (options = {}) => {
     ctx.set('Content-Encoding', encoding)
     ctx.res.removeHeader('Content-Length')
 
-    const stream = ctx.body = encodingMethods[encoding](options)
+    const stream = ctx.body = encodingMethods[encoding](encoding === 'br' ? brotliOptions : options)
 
     if (body instanceof Stream) {
       body.pipe(stream)

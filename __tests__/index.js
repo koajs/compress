@@ -354,4 +354,86 @@ describe('Compress', () => {
       })
     })
   })
+
+  it('accept-encoding: deflate', (done) => {
+    const app = new Koa()
+
+    app.use(compress())
+    app.use(sendBuffer)
+
+    request(app.listen())
+      .get('/')
+      .set('Accept-Encoding', 'deflate')
+      .expect(200)
+      .end((err, res) => {
+        if (err) { return done(err) }
+
+        assert.equal(res.headers.vary, 'Accept-Encoding')
+        assert.equal(res.headers['content-encoding'], 'deflate')
+
+        done()
+      })
+  })
+
+  it('accept-encoding: gzip', (done) => {
+    const app = new Koa()
+
+    app.use(compress())
+    app.use(sendBuffer)
+
+    request(app.listen())
+      .get('/')
+      .set('Accept-Encoding', 'gzip, deflate')
+      .expect(200)
+      .end((err, res) => {
+        if (err) { return done(err) }
+
+        assert.equal(res.headers.vary, 'Accept-Encoding')
+        assert.equal(res.headers['content-encoding'], 'gzip')
+
+        done()
+      })
+  })
+
+  it('accept-encoding: br', (done) => {
+    if (!process.versions.brotli) return done()
+
+    const app = new Koa()
+
+    app.use(compress())
+    app.use(sendBuffer)
+
+    request(app.listen())
+      .get('/')
+      .set('Accept-Encoding', 'gzip, deflate, br')
+      .expect(200)
+      .end((err, res) => {
+        if (err) { return done(err) }
+
+        assert.equal(res.headers.vary, 'Accept-Encoding')
+        assert.equal(res.headers['content-encoding'], 'br')
+
+        done()
+      })
+  })
+
+  it('accept-encoding: br (banned, should be gzip)', (done) => {
+    const app = new Koa()
+
+    app.use(compress({ brotliOptions: null }))
+    app.use(sendBuffer)
+
+    request(app.listen())
+      .get('/')
+      .set('Accept-Encoding', 'gzip, deflate, br')
+      .expect(200)
+      .end((err, res) => {
+        if (err) { return done(err) }
+
+        assert.equal(res.headers.vary, 'Accept-Encoding')
+        assert.equal(res.headers['content-encoding'], 'gzip')
+
+        done()
+      })
+  })
 })

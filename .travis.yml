@@ -1,0 +1,11 @@
+node_js:
+- stable
+- 8
+- 10
+- 12
+language: node_js
+script:
+  - npm run eslint
+  - npm run test -- --coverage
+after_script: "npx codecov"
+sudo: false
