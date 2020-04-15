@@ -29,7 +29,7 @@ The options are passed to `zlib`: http://nodejs.org/api/zlib.html#zlib_options
 ### filter
 
 An optional function that checks the response content type to decide whether to compress.
-By default, it uses [compressible](https://github.com/expressjs/compressible).
+By default, it uses [compressible](https://github.com/jshttp/compressible).
 
 ### threshold
 
@@ -38,8 +38,8 @@ Default `1024` bytes or `1kb`.
 
 ## Manually turning compression on and off
 
-You can always enable compression by setting `this.compress = true`.
-You can always disable compression by setting `this.compress = false`.
+You can always enable compression by setting `ctx.compress = true`.
+You can always disable compression by setting `ctx.compress = false`.
 This bypasses the filter check.
 
 ```js
