@@ -68,7 +68,7 @@ describe('Compress', () => {
 
   it('should compress JSON body', (done) => {
     const app = new Koa()
-    const jsonBody = { 'status': 200, 'message': 'ok', 'data': string }
+    const jsonBody = { status: 200, message: 'ok', data: string }
 
     app.use(compress())
     app.use((ctx, next) => {
@@ -92,7 +92,7 @@ describe('Compress', () => {
 
   it('should not compress JSON body below threshold', (done) => {
     const app = new Koa()
-    const jsonBody = { 'status': 200, 'message': 'ok' }
+    const jsonBody = { status: 200, message: 'ok' }
 
     app.use(compress())
     app.use((ctx, next) => {
