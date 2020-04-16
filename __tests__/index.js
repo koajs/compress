@@ -297,4 +297,61 @@ describe('Compress', () => {
         done()
       })
   })
+
+  describe('Cache-Control', () => {
+    ['no-transform', 'public, no-transform', 'no-transform, private', 'no-transform , max-age=1000', 'max-age=1000 , no-transform'].forEach(headerValue => {
+      it(`should skip Cache-Control: ${headerValue}`, done => {
+        const app = new Koa()
+
+        app.use(compress())
+        app.use((ctx, next) => {
+          ctx.set('Cache-Control', headerValue)
+          next()
+        })
+        app.use(sendString)
+
+        request(app.listen())
+          .get('/')
+          .expect(200)
+          .end((err, res) => {
+            if (err) { return done(err) }
+
+            assert.equal(res.headers['content-length'], '2048')
+            assert.equal(res.headers.vary, 'Accept-Encoding')
+            assert(!res.headers['content-encoding'])
+            assert(!res.headers['transfer-encoding'])
+            assert.equal(res.text, string)
+
+            done()
+          })
+      })
+    });
+
+    ['not-no-transform', 'public', 'no-transform-thingy'].forEach(headerValue => {
+      it(`should not skip Cache-Control: ${headerValue}`, done => {
+        const app = new Koa()
+
+        app.use(compress())
+        app.use((ctx, next) => {
+          ctx.set('Cache-Control', headerValue)
+          next()
+        })
+        app.use(sendString)
+
+        request(app.listen())
+          .get('/')
+          .expect(200)
+          .end((err, res) => {
+            if (err) { return done(err) }
+
+            assert.equal(res.headers['transfer-encoding'], 'chunked')
+            assert.equal(res.headers.vary, 'Accept-Encoding')
+            assert(!res.headers['content-length'])
+            assert.equal(res.text, string)
+
+            done()
+          })
+      })
+    })
+  })
 })
