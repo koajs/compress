@@ -420,7 +420,7 @@ describe('Compress', () => {
   it('accept-encoding: br (banned, should be gzip)', (done) => {
     const app = new Koa()
 
-    app.use(compress({ brotliOptions: null }))
+    app.use(compress({ br: null }))
     app.use(sendBuffer)
 
     request(app.listen())

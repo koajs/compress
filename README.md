@@ -35,14 +35,14 @@ By default, it uses [compressible](https://github.com/jshttp/compressible).
 Minimum response size in bytes to compress.
 Default `1024` bytes or `1kb`.
 
-### brotliOptions
+### br
 
 Koa Compress can use [Brotli compression](https://en.wikipedia.org/wiki/Brotli) on modern versions of Node
 (at least from since v11.7.0), which includes it natively. By default it is a preferred compression method
 if it is available and a user agent indicates its support by including `br` in `Accept-Encoding`
 (subject to `filter` and `threshold` described above).
 
-`brotliOptions` is the options object, which is passed to `zlib`: https://nodejs.org/api/zlib.html#zlib_class_brotlioptions
+`br` is the options object, which is passed to `zlib`: https://nodejs.org/api/zlib.html#zlib_class_brotlioptions
 
 If it is set to `null` Brotli compression will be skipped falling back to `gzip` and `deflate` as usual.
 
