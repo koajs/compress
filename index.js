@@ -32,7 +32,7 @@ if (brotliSupport) encodingMethods.br = zlib.createBrotliCompress
  */
 
 module.exports = (options = {}) => {
-  let { brotliOptions, filter = compressible, threshold = 1024 } = options
+  let { br, filter = compressible, threshold = 1024 } = options
   if (typeof threshold === 'string') threshold = bytes(threshold)
 
   return async (ctx, next) => {
@@ -52,10 +52,10 @@ module.exports = (options = {}) => {
     if (!(ctx.compress === true || filter(ctx.response.type))) return
 
     // identity
-    let encoding = null
-    if (brotliSupport && brotliOptions !== null) encoding = ctx.acceptsEncodings('br') // 1st choice
-    if (!encoding) encoding = ctx.acceptsEncodings('gzip', 'deflate', 'identity')
-    if (!encoding) ctx.throw(406, 'supported encodings: br, gzip, deflate, identity')
+    const acceptedEncodings = ['gzip', 'deflate', 'identity']
+    if (brotliSupport && br !== null) acceptedEncodings.unshift('br')
+    const encoding = ctx.acceptsEncodings(...acceptedEncodings)
+    if (!encoding) ctx.throw(406, 'supported encodings: ' + acceptedEncodings.join(', '))
     if (encoding === 'identity') return
 
     // json
@@ -67,7 +67,7 @@ module.exports = (options = {}) => {
     ctx.set('Content-Encoding', encoding)
     ctx.res.removeHeader('Content-Length')
 
-    const stream = ctx.body = encodingMethods[encoding](encoding === 'br' ? brotliOptions : options)
+    const stream = ctx.body = encodingMethods[encoding](options[encoding] || options)
 
     if (body instanceof Stream) {
       body.pipe(stream)
