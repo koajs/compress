@@ -64,7 +64,7 @@ module.exports = (options = {}) => {
     // identity
     const acceptedEncodings = ['gzip', 'deflate', 'identity']
     if (brotliSupport && br !== null) acceptedEncodings.unshift('br')
-    const encoding = ctx.acceptsEncodings(...acceptedEncodings)
+    const encoding = ctx.acceptsEncodings(acceptedEncodings)
     if (!encoding) ctx.throw(406, 'supported encodings: ' + acceptedEncodings.join(', '))
     if (encoding === 'identity') return
 
