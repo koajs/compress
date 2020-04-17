@@ -13,6 +13,7 @@
   "dependencies": {
     "bytes": "^3.0.0",
     "compressible": "^2.0.0",
+    "http-errors": "^1.7.3",
     "koa-is-json": "^1.0.0",
     "statuses": "^2.0.0"
   },
