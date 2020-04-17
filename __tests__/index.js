@@ -405,7 +405,7 @@ describe('Compress', () => {
 
     request(app.listen())
       .get('/')
-      .set('Accept-Encoding', 'gzip, deflate, br')
+      .set('Accept-Encoding', 'br')
       .expect(200)
       .end((err, res) => {
         if (err) { return done(err) }
