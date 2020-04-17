@@ -32,10 +32,11 @@
     "test": "jest --forceExit"
   },
   "files": [
-    "index.js",
+    "lib",
     "LICENSE",
     "HISTORY.md"
   ],
+  "main": "lib",
   "jest": {
     "testEnvironment": "node"
   },
