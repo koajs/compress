@@ -90,13 +90,19 @@ describe('getPreferredContentEncoding', () => {
     {
       acceptEncoding: 'gzip, deflate',
       preferredEncoding: 'gzip'
+    },
+    {
+      name: 'w/o br as a preferred encoding',
+      acceptEncoding: 'gzip, deflate, br',
+      preferredEncodings: ['gzip', 'deflate'],
+      preferredEncoding: 'gzip'
     }
   ]
 
   fixtures.forEach((fixture) => {
-    test(fixture.acceptEncoding, () => {
+    test(fixture.name || fixture.acceptEncoding, () => {
       const weights = parseAcceptEncoding(fixture.acceptEncoding)
-      const preferredEncoding = getPreferredContentEncoding(weights)
+      const preferredEncoding = getPreferredContentEncoding(weights, fixture.preferredEncodings)
       assert.strictEqual(preferredEncoding, fixture.preferredEncoding)
     })
   })
