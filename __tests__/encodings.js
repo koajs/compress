@@ -95,6 +95,10 @@ describe('getPreferredContentEncoding', () => {
       acceptEncoding: 'gzip, deflate, br',
       preferredEncodings: ['gzip', 'deflate'],
       preferredEncoding: 'gzip'
+    },
+    {
+      acceptEncoding: 'identity',
+      preferredEncoding: 'identity'
     }
   ]
 
