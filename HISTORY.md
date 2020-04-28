@@ -8,6 +8,7 @@
  * added compression disabling option: set `options.br = false`
 
 3.1.0 / 2020-04-15
+==================
 
  * support no-transform @Pawda
 
