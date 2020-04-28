@@ -1,4 +1,12 @@
 
+4.0.0 / 2020-04-27
+==================
+
+ * drop support for versions of node below 10
+ * add brotli support for versions of node that support it
+ * changed compression options; `options` is no longer passed to each compression function. Use `options.gzip = {}`, `options.br = {}`, etc.
+ * added compression disabling option: set `options.br = false`
+
 3.1.0 / 2020-04-15
 
  * support no-transform @Pawda

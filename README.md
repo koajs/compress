@@ -8,43 +8,52 @@ Compress middleware for Koa
 ## Example
 
 ```js
-var compress = require('koa-compress')
-var Koa = require('koa')
+const compress = require('koa-compress')
+const Koa = require('koa')
 
-var app = new Koa()
+const app = new Koa()
 app.use(compress({
-  filter: function (content_type) {
+  filter (content_type) {
   	return /text/i.test(content_type)
   },
   threshold: 2048,
-  flush: require('zlib').Z_SYNC_FLUSH
+  gzip: {
+    flush: require('zlib').Z_SYNC_FLUSH
+  },
+  deflate: {
+    flush: require('zlib').Z_SYNC_FLUSH,
+  },
+  br: false // disable brotli
 }))
 ```
 
 ## Options
 
-The options are passed to `zlib`: http://nodejs.org/api/zlib.html#zlib_options
+### filter\<Function\>
 
-### filter
+```ts
+function (mimeType: string): Boolean {
+
+}
+```
 
 An optional function that checks the response content type to decide whether to compress.
 By default, it uses [compressible](https://github.com/jshttp/compressible).
 
-### threshold
+### options.threshold\<String|Number\>
 
 Minimum response size in bytes to compress.
 Default `1024` bytes or `1kb`.
 
-### br
+### options[encoding]\<Object\>
 
-Koa Compress can use [Brotli compression](https://en.wikipedia.org/wiki/Brotli) on modern versions of Node
-(at least from since v11.7.0), which includes it natively. By default it is a preferred compression method
-if it is available and a user agent indicates its support by including `br` in `Accept-Encoding`
-(subject to `filter` and `threshold` described above).
+The current encodings are, in order of preference: `br`, `gzip`, `deflate`.
+Setting `options[encoding] = {}` will pass those options to the encoding function.
+Setting `options[encoding] = false` will disable that encoding.
 
-`br` is the options object, which is passed to `zlib`: https://nodejs.org/api/zlib.html#zlib_class_brotlioptions
+### options.br
 
-If it is set to `null` Brotli compression will be skipped falling back to `gzip` and `deflate` as usual.
+[Brotli compression](https://en.wikipedia.org/wiki/Brotli) is supported in node v11.7.0+, which includes it natively. 
 
 ## Manually turning compression on and off
 
