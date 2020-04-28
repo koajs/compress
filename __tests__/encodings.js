@@ -1,10 +1,7 @@
 
 const assert = require('assert')
 
-const {
-  parseAcceptEncoding,
-  getPreferredContentEncoding
-} = require('../lib/encodings')
+const Encodings = require('../lib/encodings')
 
 describe('parseAcceptEncoding', () => {
   const fixtures = [
@@ -62,7 +59,9 @@ describe('parseAcceptEncoding', () => {
 
   fixtures.forEach((fixture) => {
     test(fixture.input, () => {
-      const encodingWeights = parseAcceptEncoding(fixture.input)
+      const encodings = new Encodings()
+      encodings.parseAcceptEncoding(fixture.input)
+      const { encodingWeights } = encodings
 
       Object.keys(fixture.output).forEach((encoding) => {
         const expected = fixture.output[encoding]
@@ -101,8 +100,11 @@ describe('getPreferredContentEncoding', () => {
 
   fixtures.forEach((fixture) => {
     test(fixture.name || fixture.acceptEncoding, () => {
-      const weights = parseAcceptEncoding(fixture.acceptEncoding)
-      const preferredEncoding = getPreferredContentEncoding(weights, fixture.preferredEncodings)
+      const encodings = new Encodings({
+        preferredEncodings: fixture.preferredEncodings
+      })
+      encodings.parseAcceptEncoding(fixture.acceptEncoding)
+      const preferredEncoding = encodings.getPreferredContentEncoding()
       assert.strictEqual(preferredEncoding, fixture.preferredEncoding)
     })
   })
