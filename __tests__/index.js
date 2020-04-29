@@ -436,4 +436,37 @@ describe('Compress', () => {
         done()
       })
   })
+
+  it('accept-encoding: gzip, deflate, br. Then gzip', (done) => {
+    const app = new Koa()
+
+    app.use(compress())
+    app.use(sendBuffer)
+
+    const server = app.listen()
+    afterEach(() => server.close())
+
+    request(server)
+      .get('/')
+      .set('Accept-Encoding', 'gzip, deflate, br')
+      .expect(200)
+      .end((err, res) => {
+        if (err) { return done(err) }
+
+        expect(res.headers['content-encoding']).toBe('br')
+      })
+
+    request(server)
+      .get('/')
+      .set('Accept-Encoding', 'gzip')
+      .expect(200)
+      .end((err, res) => {
+        if (err) { return done(err) }
+
+        expect(res.headers['content-encoding']).toBe('gzip')
+
+        done()
+      })
+
+  })
 })
