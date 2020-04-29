@@ -30,7 +30,7 @@
   },
   "scripts": {
     "eslint": "eslint --ignore-path .gitignore .",
-    "test": "jest --forceExit"
+    "test": "jest"
   },
   "files": [
     "lib",
