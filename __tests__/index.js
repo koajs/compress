@@ -467,6 +467,5 @@ describe('Compress', () => {
 
         done()
       })
-
   })
 })
