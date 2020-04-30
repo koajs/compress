@@ -1,4 +1,9 @@
 
+4.0.1 / 2020-04-29
+==================
+
+ * fix issue with state being preserved between requests
+
 4.0.0 / 2020-04-27
 ==================
 
