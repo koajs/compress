@@ -48,3 +48,28 @@ describe('Accept-Encodings', () => {
     })
   })
 })
+
+describe('Subsequent requests', () => {
+  test('accept-encoding: "gzip, deflate, br", then "gzip"', async () => {
+    const app = new Koa()
+
+    app.use(compress())
+    app.use(async (ctx) => {
+      ctx.body = await crypto.randomBytes(2048).toString('base64')
+    })
+    server = app.listen()
+
+    const res1 = await request(server)
+      .get('/')
+      .set('Accept-Encoding', 'gzip, deflate, br')
+      .expect(200)
+    expect(res1.headers['content-encoding']).toBe('br')
+
+    const res2 = await request(server)
+      .get('/')
+      .set('Accept-Encoding', 'gzip')
+      .expect(200)
+
+    expect(res2.headers['content-encoding']).toBe('gzip')
+  })
+})
