@@ -21,13 +21,17 @@ describe('Compress', () => {
     ctx.body = buffer
   }
 
+  let server
+  afterEach(() => { if (server) server.close() })
+
   it('should compress strings', (done) => {
     const app = new Koa()
 
     app.use(compress())
     app.use(sendString)
+    server = app.listen()
 
-    request(app.listen())
+    request(server)
       .get('/')
       .expect(200)
       .end((err, res) => {
@@ -49,8 +53,9 @@ describe('Compress', () => {
       threshold: '1mb'
     }))
     app.use(sendString)
+    server = app.listen()
 
-    request(app.listen())
+    request(server)
       .get('/')
       .expect(200)
       .end((err, res) => {
@@ -74,8 +79,9 @@ describe('Compress', () => {
     app.use((ctx, next) => {
       ctx.body = jsonBody
     })
+    server = app.listen()
 
-    request(app.listen())
+    request(server)
       .get('/')
       .expect(200)
       .end((err, res) => {
@@ -98,8 +104,9 @@ describe('Compress', () => {
     app.use((ctx, next) => {
       ctx.body = jsonBody
     })
+    server = app.listen()
 
-    request(app.listen())
+    request(server)
       .get('/')
       .expect(200)
       .end((err, res) => {
@@ -119,8 +126,9 @@ describe('Compress', () => {
 
     app.use(compress())
     app.use(sendBuffer)
+    server = app.listen()
 
-    request(app.listen())
+    request(server)
       .get('/')
       .expect(200)
       .end((err, res) => {
@@ -143,8 +151,9 @@ describe('Compress', () => {
       ctx.type = 'application/javascript'
       ctx.body = fs.createReadStream(path.join(__dirname, 'index.js'))
     })
+    server = app.listen()
 
-    request(app.listen())
+    request(server)
       .get('/')
       .expect(200)
       .end((err, res) => {
@@ -164,8 +173,9 @@ describe('Compress', () => {
 
     app.use(compress())
     app.use(sendBuffer)
+    server = app.listen()
 
-    request(app.listen())
+    request(server)
       .get('/')
       .expect(200)
       .end((err, res) => {
@@ -187,8 +197,9 @@ describe('Compress', () => {
       ctx.compress = false
       ctx.body = buffer
     })
+    server = app.listen()
 
-    request(app.listen())
+    request(server)
       .get('/')
       .expect(200)
       .end((err, res) => {
@@ -208,8 +219,9 @@ describe('Compress', () => {
 
     app.use(compress())
     app.use(sendString)
+    server = app.listen()
 
-    request(app.listen())
+    request(server)
       .head('/')
       .expect(200, (err, res) => {
         if (err) { return done(err) }
@@ -225,8 +237,9 @@ describe('Compress', () => {
 
     app.use(compress())
     app.use(sendBuffer)
+    server = app.listen()
 
-    request(app.listen())
+    request(server)
       .get('/')
       .set('Accept-Encoding', 'sdch, gzip, deflate')
       .expect(200, done)
@@ -237,8 +250,9 @@ describe('Compress', () => {
 
     app.use(compress())
     app.use(sendBuffer)
+    server = app.listen()
 
-    request(app.listen())
+    request(server)
       .get('/')
       .expect(200, done)
   })
@@ -251,8 +265,9 @@ describe('Compress', () => {
       ctx.type = 'image/png'
       ctx.body = Buffer.alloc(2048)
     })
+    server = app.listen()
 
-    request(app.listen())
+    request(server)
       .get('/')
       .expect(200, done)
   })
@@ -268,8 +283,9 @@ describe('Compress', () => {
       ctx.type = 'text'
       ctx.body = 'asdf'
     })
+    server = app.listen()
 
-    request(app.listen())
+    request(server)
       .get('/')
       .expect('asdf', done)
   })
@@ -281,8 +297,9 @@ describe('Compress', () => {
       flush: zlib.Z_SYNC_FLUSH
     }))
     app.use(sendString)
+    server = app.listen()
 
-    request(app.listen())
+    request(server)
       .get('/')
       .expect(200)
       .end((err, res) => {
@@ -309,8 +326,9 @@ describe('Compress', () => {
           next()
         })
         app.use(sendString)
+        server = app.listen()
 
-        request(app.listen())
+        request(server)
           .get('/')
           .expect(200)
           .end((err, res) => {
@@ -337,8 +355,9 @@ describe('Compress', () => {
           next()
         })
         app.use(sendString)
+        server = app.listen()
 
-        request(app.listen())
+        request(server)
           .get('/')
           .expect(200)
           .end((err, res) => {
@@ -360,8 +379,9 @@ describe('Compress', () => {
 
     app.use(compress())
     app.use(sendBuffer)
+    server = app.listen()
 
-    request(app.listen())
+    request(server)
       .get('/')
       .set('Accept-Encoding', 'deflate')
       .expect(200)
@@ -380,8 +400,9 @@ describe('Compress', () => {
 
     app.use(compress())
     app.use(sendBuffer)
+    server = app.listen()
 
-    request(app.listen())
+    request(server)
       .get('/')
       .set('Accept-Encoding', 'gzip, deflate')
       .expect(200)
@@ -402,8 +423,9 @@ describe('Compress', () => {
 
     app.use(compress())
     app.use(sendBuffer)
+    server = app.listen()
 
-    request(app.listen())
+    request(server)
       .get('/')
       .set('Accept-Encoding', 'br')
       .expect(200)
@@ -422,8 +444,9 @@ describe('Compress', () => {
 
     app.use(compress({ br: false }))
     app.use(sendBuffer)
+    server = app.listen()
 
-    request(app.listen())
+    request(server)
       .get('/')
       .set('Accept-Encoding', 'gzip, deflate, br')
       .expect(200)
