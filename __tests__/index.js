@@ -245,7 +245,7 @@ describe('Compress', () => {
       .expect(200, done)
   })
 
-  it('should not compress if no accept-encoding is sent', (done) => {
+  it('should not compress if no accept-encoding is sent (with the default)', (done) => {
     const app = new Koa()
     app.use(compress({
       threshold: 0
@@ -257,14 +257,39 @@ describe('Compress', () => {
     server = app.listen()
 
     request(server)
-      .get('/')
-      .unset('accept-encoding')
+    .get('/')
+      .set('Accept-Encoding', '')
       .end((err, res) => {
         if (err) { return done(err) }
 
         assert(!res.headers['content-encoding'])
         assert(!res.headers['transfer-encoding'])
         assert.equal(res.headers['content-length'], '1024')
+        assert.equal(res.headers.vary, 'Accept-Encoding')
+
+        done()
+      })
+  })
+
+  it('should be gzip if no accept-encoding is sent (with the standard default)', (done) => {
+    const app = new Koa()
+    app.use(compress({
+      threshold: 0,
+      defaultEncoding: '*'
+    }))
+    app.use((ctx) => {
+      ctx.type = 'text'
+      ctx.body = buffer
+    })
+    server = app.listen()
+
+    request(server)
+      .get('/')
+      .set('Accept-Encoding', '')
+      .end((err, res) => {
+        if (err) { return done(err) }
+
+        assert.equal(res.headers['content-encoding'], 'gzip')
         assert.equal(res.headers.vary, 'Accept-Encoding')
 
         done()
