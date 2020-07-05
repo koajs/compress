@@ -257,7 +257,7 @@ describe('Compress', () => {
     server = app.listen()
 
     request(server)
-    .get('/')
+      .get('/')
       .set('Accept-Encoding', '')
       .end((err, res) => {
         if (err) { return done(err) }
