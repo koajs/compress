@@ -333,7 +333,7 @@ describe('Compress', () => {
     const app = new Koa()
 
     app.use(compress({
-      flush: zlib.Z_SYNC_FLUSH
+      flush: zlib.constants.Z_SYNC_FLUSH
     }))
     app.use(sendString)
     server = app.listen()
