@@ -51,9 +51,19 @@ The current encodings are, in order of preference: `br`, `gzip`, `deflate`.
 Setting `options[encoding] = {}` will pass those options to the encoding function.
 Setting `options[encoding] = false` will disable that encoding.
 
-### options.br
+#### options<span></span>.br
 
-[Brotli compression](https://en.wikipedia.org/wiki/Brotli) is supported in node v11.7.0+, which includes it natively. 
+[Brotli compression](https://en.wikipedia.org/wiki/Brotli) is supported in node v11.7.0+, which includes it natively.
+
+### options.defaultEncoding\<String\>
+
+An optional string, which specifies what encoders to use for requests without
+[Accept-Encoding](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Accept-Encoding).
+Default `idenity`.
+
+The standard dictates to treat such requests as `*` meaning that all compressions are permissible,
+yet it causes very practical problems when debugging servers with manual tools like `curl`, `wget`, and so on.
+If you want to enable the standard behavior, just set `defaultEncoding` to `*`.
 
 ## Manually turning compression on and off
 
