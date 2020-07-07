@@ -40,16 +40,18 @@ function (mimeType: string): Boolean {
 An optional function that checks the response content type to decide whether to compress.
 By default, it uses [compressible](https://github.com/jshttp/compressible).
 
-### options.threshold\<String|Number\>
+### options.threshold\<String|Number|Function\>
 
-Minimum response size in bytes to compress.
+Minimum response size in bytes to compress or a function that returns such response (see below).
 Default `1024` bytes or `1kb`.
 
-### options[encoding]\<Object\>
+### options[encoding]\<Object|Function\>
 
 The current encodings are, in order of preference: `br`, `gzip`, `deflate`.
 Setting `options[encoding] = {}` will pass those options to the encoding function.
 Setting `options[encoding] = false` will disable that encoding.
+
+It can be a function that returns options (see below).
 
 #### options<span></span>.br
 
@@ -77,3 +79,33 @@ app.use((ctx, next) => {
   ctx.body = fs.createReadStream(file)
 })
 ```
+
+`ctx.compress` can be an object similar to `options` above, whose properties (`threshold` and encoding options)
+override the global `options` for this response and bypass the filter check.
+
+## Functional properties
+
+Certain properties (`threshold` and encoding options) can be specified as functions. Such functions will be called
+for every response with three arguments:
+
+* `type` &mdash; the same as `ctx.response.type` (provided for convenience)
+* `size` &mdash; the same as `ctx.response.length` (provided for convenience)
+* `ctx` &mdash; the whole context object, if you want to do something unique
+
+It should return a valid value for that property. It is possible to return a function of the same shape,
+which will be used to calculate the actual property.
+
+Example:
+
+```js
+app.use((ctx, next) => {
+  // ...
+  ctx.compress = (type, size, ctx) => ({
+    br:   size && size >= 65536,
+    gzip: size && size <  65536
+  })
+  ctx.body = payload
+})
+```
+
+Read all about `ctx` in https://koajs.com/#context and `ctx.response` in https://koajs.com/#response
