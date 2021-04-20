@@ -59,7 +59,7 @@ Setting `options[encoding] = false` will disable that encoding.
 
 An optional string, which specifies what encoders to use for requests without
 [Accept-Encoding](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Accept-Encoding).
-Default `idenity`.
+Default `identity`.
 
 The standard dictates to treat such requests as `*` meaning that all compressions are permissible,
 yet it causes very practical problems when debugging servers with manual tools like `curl`, `wget`, and so on.
