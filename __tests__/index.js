@@ -43,7 +43,7 @@ describe('Compress', () => {
     done()
   })
 
-  it('should not compress strings below threshold', async (done) => {
+  test('should not compress strings below threshold', async (done) => {
     const app = new Koa()
 
     app.use(compress({
@@ -65,7 +65,7 @@ describe('Compress', () => {
     done()
   })
 
-  it('should compress JSON body', async (done) => {
+  test('should compress JSON body', async (done) => {
     const app = new Koa()
     const jsonBody = { status: 200, message: 'ok', data: string }
 
@@ -87,7 +87,7 @@ describe('Compress', () => {
     done()
   })
 
-  it('should not compress JSON body below threshold', async (done) => {
+  test('should not compress JSON body below threshold', async (done) => {
     const app = new Koa()
     const jsonBody = { status: 200, message: 'ok' }
 
@@ -109,7 +109,7 @@ describe('Compress', () => {
     done()
   })
 
-  it('should compress buffers', async (done) => {
+  test('should compress buffers', async (done) => {
     const app = new Koa()
 
     app.use(compress())
@@ -127,7 +127,7 @@ describe('Compress', () => {
     done()
   })
 
-  it('should compress streams', async (done) => {
+  test('should compress streams', async (done) => {
     const app = new Koa()
 
     app.use(compress())
@@ -150,7 +150,7 @@ describe('Compress', () => {
     done()
   })
 
-  it('should compress when ctx.compress === true', async (done) => {
+  test('should compress when ctx.compress === true', async (done) => {
     const app = new Koa()
 
     app.use(compress())
@@ -168,7 +168,7 @@ describe('Compress', () => {
     done()
   })
 
-  it('should not compress when ctx.compress === false', async (done) => {
+  test('should not compress when ctx.compress === false', async (done) => {
     const app = new Koa()
 
     app.use(compress())
@@ -190,7 +190,7 @@ describe('Compress', () => {
     done()
   })
 
-  it('should not compress HEAD requests', async (done) => {
+  test('should not compress HEAD requests', async (done) => {
     const app = new Koa()
 
     app.use(compress())
@@ -205,7 +205,7 @@ describe('Compress', () => {
     done()
   })
 
-  it('should not crash even if accept-encoding: sdch', (done) => {
+  test('should not crash even if accept-encoding: sdch', (done) => {
     const app = new Koa()
 
     app.use(compress())
@@ -218,7 +218,7 @@ describe('Compress', () => {
       .expect(200, done)
   })
 
-  it('should not compress if no accept-encoding is sent (with the default)', async (done) => {
+  test('should not compress if no accept-encoding is sent (with the default)', async (done) => {
     const app = new Koa()
     app.use(compress({
       threshold: 0
@@ -241,7 +241,7 @@ describe('Compress', () => {
     done()
   })
 
-  it('should be gzip if no accept-encoding is sent (with the standard default)', async (done) => {
+  test('should be gzip if no accept-encoding is sent (with the standard default)', async (done) => {
     const app = new Koa()
     app.use(compress({
       threshold: 0,
@@ -263,7 +263,7 @@ describe('Compress', () => {
     done()
   })
 
-  it('should not crash if a type does not pass the filter', (done) => {
+  test('should not crash if a type does not pass the filter', (done) => {
     const app = new Koa()
 
     app.use(compress())
@@ -278,7 +278,7 @@ describe('Compress', () => {
       .expect(200, done)
   })
 
-  it('should not compress when transfer-encoding is already set', (done) => {
+  test('should not compress when transfer-encoding is already set', (done) => {
     const app = new Koa()
 
     app.use(compress({
@@ -296,7 +296,7 @@ describe('Compress', () => {
       .expect('asdf', done)
   })
 
-  it('should support Z_SYNC_FLUSH', async (done) => {
+  test('should support Z_SYNC_FLUSH', async (done) => {
     const app = new Koa()
 
     app.use(compress({
@@ -319,7 +319,7 @@ describe('Compress', () => {
 
   describe('Cache-Control', () => {
     ['no-transform', 'public, no-transform', 'no-transform, private', 'no-transform , max-age=1000', 'max-age=1000 , no-transform'].forEach(headerValue => {
-      it(`should skip Cache-Control: ${headerValue}`, async (done) => {
+      test(`should skip Cache-Control: ${headerValue}`, async (done) => {
         const app = new Koa()
 
         app.use(compress())
@@ -345,7 +345,7 @@ describe('Compress', () => {
     });
 
     ['not-no-transform', 'public', 'no-transform-thingy'].forEach(headerValue => {
-      it(`should not skip Cache-Control: ${headerValue}`, async (done) => {
+      test(`should not skip Cache-Control: ${headerValue}`, async (done) => {
         const app = new Koa()
 
         app.use(compress())
@@ -370,7 +370,7 @@ describe('Compress', () => {
     })
   })
 
-  it('accept-encoding: deflate', async (done) => {
+  test('accept-encoding: deflate', async (done) => {
     const app = new Koa()
 
     app.use(compress())
@@ -388,7 +388,7 @@ describe('Compress', () => {
     done()
   })
 
-  it('accept-encoding: gzip', async (done) => {
+  test('accept-encoding: gzip', async (done) => {
     const app = new Koa()
 
     app.use(compress())
@@ -406,7 +406,7 @@ describe('Compress', () => {
     done()
   })
 
-  it('accept-encoding: br', async (done) => {
+  test('accept-encoding: br', async (done) => {
     if (!process.versions.brotli) return done()
 
     const app = new Koa()
@@ -426,7 +426,7 @@ describe('Compress', () => {
     done()
   })
 
-  it('accept-encoding: br (banned, should be gzip)', async (done) => {
+  test('accept-encoding: br (banned, should be gzip)', async (done) => {
     const app = new Koa()
 
     app.use(compress({ br: false }))
