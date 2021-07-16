@@ -10,7 +10,7 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [12.x, 14.x]
+        node-version: [12.x, 13.x, 14.x, 15.x, 16.x]
 
     env:
       CI: true
@@ -22,7 +22,7 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: ${{ matrix.node-version }}
-      - run: npm ci
-      - run: npm run eslint
+      - run: npm i
+      - run: npm run lint
       - run: npm run test -- --coverage
       - run: npx codecov

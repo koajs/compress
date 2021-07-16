@@ -12,11 +12,11 @@ describe('Compress', () => {
   const buffer = crypto.randomBytes(1024)
   const string = buffer.toString('hex')
 
-  function sendString(ctx, next) {
+  function sendString (ctx, next) {
     ctx.body = string
   }
 
-  function sendBuffer(ctx, next) {
+  function sendBuffer (ctx, next) {
     ctx.compress = true
     ctx.body = buffer
   }
