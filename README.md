@@ -1,30 +1,32 @@
 # Koa Compress
 
+> Compress middleware for Koa.js
+
 [![Node.js CI](https://github.com/koajs/compress/workflows/Node.js%20CI/badge.svg?branch=master)](https://github.com/koajs/compress/actions?query=workflow%3A%22Node.js+CI%22+branch%3Amaster)
 [![codecov](https://codecov.io/gh/koajs/compress/branch/master/graph/badge.svg)](https://codecov.io/gh/koajs/compress)
-
-Compress middleware for Koa
 
 ## Example
 
 ```js
-const compress = require('koa-compress')
-const Koa = require('koa')
+const compress = require("koa-compress");
+const Koa = require("koa");
 
-const app = new Koa()
-app.use(compress({
-  filter (content_type) {
-  	return /text/i.test(content_type)
-  },
-  threshold: 2048,
-  gzip: {
-    flush: require('zlib').constants.Z_SYNC_FLUSH
-  },
-  deflate: {
-    flush: require('zlib').constants.Z_SYNC_FLUSH,
-  },
-  br: false // disable brotli
-}))
+const app = new Koa();
+app.use(
+  compress({
+    filter(content_type) {
+      return /text/i.test(content_type);
+    },
+    threshold: 2048,
+    gzip: {
+      flush: require("zlib").constants.Z_SYNC_FLUSH,
+    },
+    deflate: {
+      flush: require("zlib").constants.Z_SYNC_FLUSH,
+    },
+    br: false, // disable brotli
+  })
+);
 ```
 
 ## Options
@@ -73,7 +75,7 @@ This bypasses the filter check.
 
 ```js
 app.use((ctx, next) => {
-  ctx.compress = true
-  ctx.body = fs.createReadStream(file)
-})
+  ctx.compress = true;
+  ctx.body = fs.createReadStream(file);
+});
 ```
