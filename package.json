@@ -13,20 +13,20 @@
   "dependencies": {
     "bytes": "^3.0.0",
     "compressible": "^2.0.0",
-    "http-errors": "^1.7.3",
+    "http-errors": "^1.8.0",
     "koa-is-json": "^1.0.0",
-    "statuses": "^2.0.0"
+    "statuses": "^2.0.1"
   },
   "devDependencies": {
-    "eslint": "^6.0.0",
-    "eslint-config-standard": "^14.1.1",
-    "eslint-plugin-import": "^2.9.0",
+    "eslint": "^7.32.0",
+    "eslint-config-standard": "^16.0.3",
+    "eslint-plugin-import": "^2.24.0",
     "eslint-plugin-node": "^11.0.0",
-    "eslint-plugin-promise": "^4.0.0",
-    "eslint-plugin-standard": "^4.0.1",
-    "jest": "^25.3.0",
-    "koa": "^2.0.1",
-    "supertest": "^4.0.2"
+    "eslint-plugin-promise": "^5.1.0",
+    "eslint-plugin-standard": "^5.0.0",
+    "jest": "^27.0.6",
+    "koa": "^2.13.1",
+    "supertest": "^6.1.6"
   },
   "scripts": {
     "eslint": "eslint --ignore-path .gitignore .",
