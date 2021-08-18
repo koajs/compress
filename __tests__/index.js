@@ -2,7 +2,6 @@ const request = require('supertest')
 const assert = require('assert')
 const crypto = require('crypto')
 const path = require('path')
-const zlib = require('zlib')
 const Koa = require('koa')
 const fs = require('fs')
 
@@ -35,10 +34,10 @@ describe('Compress', () => {
       .get('/')
       .expect(200)
 
-    assert.equal(res.headers['transfer-encoding'], 'chunked')
-    assert.equal(res.headers.vary, 'Accept-Encoding')
+    assert.strictEqual(res.headers['transfer-encoding'], 'chunked')
+    assert.strictEqual(res.headers.vary, 'Accept-Encoding')
     assert(!res.headers['content-length'])
-    assert.equal(res.text, string)
+    assert.strictEqual(res.text, string)
   })
 
   test('should not compress strings below threshold', async () => {
@@ -54,11 +53,11 @@ describe('Compress', () => {
       .get('/')
       .expect(200)
 
-    assert.equal(res.headers['content-length'], '2048')
-    assert.equal(res.headers.vary, 'Accept-Encoding')
+    assert.strictEqual(res.headers['content-length'], '2048')
+    assert.strictEqual(res.headers.vary, 'Accept-Encoding')
     assert(!res.headers['content-encoding'])
     assert(!res.headers['transfer-encoding'])
-    assert.equal(res.text, string)
+    assert.strictEqual(res.text, string)
   })
 
   test('should compress JSON body', async () => {
@@ -75,10 +74,10 @@ describe('Compress', () => {
       .get('/')
       .expect(200)
 
-    assert.equal(res.headers['transfer-encoding'], 'chunked')
-    assert.equal(res.headers.vary, 'Accept-Encoding')
+    assert.strictEqual(res.headers['transfer-encoding'], 'chunked')
+    assert.strictEqual(res.headers.vary, 'Accept-Encoding')
     assert(!res.headers['content-length'])
-    assert.equal(res.text, JSON.stringify(jsonBody))
+    assert.strictEqual(res.text, JSON.stringify(jsonBody))
   })
 
   test('should not compress JSON body below threshold', async () => {
@@ -95,10 +94,10 @@ describe('Compress', () => {
       .get('/')
       .expect(200)
 
-    assert.equal(res.headers.vary, 'Accept-Encoding')
+    assert.strictEqual(res.headers.vary, 'Accept-Encoding')
     assert(!res.headers['content-encoding'])
     assert(!res.headers['transfer-encoding'])
-    assert.equal(res.text, JSON.stringify(jsonBody))
+    assert.strictEqual(res.text, JSON.stringify(jsonBody))
   })
 
   test('should compress buffers', async () => {
@@ -112,8 +111,8 @@ describe('Compress', () => {
       .get('/')
       .expect(200)
 
-    assert.equal(res.headers['transfer-encoding'], 'chunked')
-    assert.equal(res.headers.vary, 'Accept-Encoding')
+    assert.strictEqual(res.headers['transfer-encoding'], 'chunked')
+    assert.strictEqual(res.headers.vary, 'Accept-Encoding')
     assert(!res.headers['content-length'])
   })
 
@@ -133,8 +132,8 @@ describe('Compress', () => {
       .expect(200)
 
     // res.should.have.header('Content-Encoding', 'gzip')
-    assert.equal(res.headers['transfer-encoding'], 'chunked')
-    assert.equal(res.headers.vary, 'Accept-Encoding')
+    assert.strictEqual(res.headers['transfer-encoding'], 'chunked')
+    assert.strictEqual(res.headers.vary, 'Accept-Encoding')
     assert(!res.headers['content-length'])
   })
 
@@ -149,8 +148,8 @@ describe('Compress', () => {
       .get('/')
       .expect(200)
 
-    assert.equal(res.headers['transfer-encoding'], 'chunked')
-    assert.equal(res.headers.vary, 'Accept-Encoding')
+    assert.strictEqual(res.headers['transfer-encoding'], 'chunked')
+    assert.strictEqual(res.headers.vary, 'Accept-Encoding')
     assert(!res.headers['content-length'])
   })
 
@@ -168,8 +167,8 @@ describe('Compress', () => {
       .get('/')
       .expect(200)
 
-    assert.equal(res.headers['content-length'], '1024')
-    assert.equal(res.headers.vary, 'Accept-Encoding')
+    assert.strictEqual(res.headers['content-length'], '1024')
+    assert.strictEqual(res.headers.vary, 'Accept-Encoding')
     assert(!res.headers['content-encoding'])
     assert(!res.headers['transfer-encoding'])
   })
@@ -217,8 +216,8 @@ describe('Compress', () => {
 
     assert(!res.headers['content-encoding'])
     assert(!res.headers['transfer-encoding'])
-    assert.equal(res.headers['content-length'], '1024')
-    assert.equal(res.headers.vary, 'Accept-Encoding')
+    assert.strictEqual(res.headers['content-length'], '1024')
+    assert.strictEqual(res.headers.vary, 'Accept-Encoding')
   })
 
   test('should be gzip if no accept-encoding is sent (with the standard default)', async () => {
@@ -237,8 +236,8 @@ describe('Compress', () => {
       .get('/')
       .set('Accept-Encoding', '')
 
-    assert.equal(res.headers['content-encoding'], 'gzip')
-    assert.equal(res.headers.vary, 'Accept-Encoding')
+    assert.strictEqual(res.headers['content-encoding'], 'gzip')
+    assert.strictEqual(res.headers.vary, 'Accept-Encoding')
   })
 
   test('should not crash if a type does not pass the filter', () => {
@@ -291,11 +290,11 @@ describe('Compress', () => {
           .get('/')
           .expect(200)
 
-        assert.equal(res.headers['content-length'], '2048')
-        assert.equal(res.headers.vary, 'Accept-Encoding')
+        assert.strictEqual(res.headers['content-length'], '2048')
+        assert.strictEqual(res.headers.vary, 'Accept-Encoding')
         assert(!res.headers['content-encoding'])
         assert(!res.headers['transfer-encoding'])
-        assert.equal(res.text, string)
+        assert.strictEqual(res.text, string)
       })
     });
 
@@ -315,10 +314,10 @@ describe('Compress', () => {
           .get('/')
           .expect(200)
 
-        assert.equal(res.headers['transfer-encoding'], 'chunked')
-        assert.equal(res.headers.vary, 'Accept-Encoding')
+        assert.strictEqual(res.headers['transfer-encoding'], 'chunked')
+        assert.strictEqual(res.headers.vary, 'Accept-Encoding')
         assert(!res.headers['content-length'])
-        assert.equal(res.text, string)
+        assert.strictEqual(res.text, string)
       })
     })
   })
@@ -335,8 +334,8 @@ describe('Compress', () => {
       .set('Accept-Encoding', 'deflate')
       .expect(200)
 
-    assert.equal(res.headers.vary, 'Accept-Encoding')
-    assert.equal(res.headers['content-encoding'], 'deflate')
+    assert.strictEqual(res.headers.vary, 'Accept-Encoding')
+    assert.strictEqual(res.headers['content-encoding'], 'deflate')
   })
 
   test('accept-encoding: gzip', async () => {
@@ -351,8 +350,8 @@ describe('Compress', () => {
       .set('Accept-Encoding', 'gzip, deflate')
       .expect(200)
 
-    assert.equal(res.headers.vary, 'Accept-Encoding')
-    assert.equal(res.headers['content-encoding'], 'gzip')
+    assert.strictEqual(res.headers.vary, 'Accept-Encoding')
+    assert.strictEqual(res.headers['content-encoding'], 'gzip')
   })
 
   if (process.versions.brotli) {
@@ -368,8 +367,8 @@ describe('Compress', () => {
         .set('Accept-Encoding', 'br')
         .expect(200)
 
-      assert.equal(res.headers.vary, 'Accept-Encoding')
-      assert.equal(res.headers['content-encoding'], 'br')
+      assert.strictEqual(res.headers.vary, 'Accept-Encoding')
+      assert.strictEqual(res.headers['content-encoding'], 'br')
     })
   }
 
@@ -385,7 +384,7 @@ describe('Compress', () => {
       .set('Accept-Encoding', 'gzip, deflate, br')
       .expect(200)
 
-    assert.equal(res.headers.vary, 'Accept-Encoding')
-    assert.equal(res.headers['content-encoding'], 'gzip')
+    assert.strictEqual(res.headers.vary, 'Accept-Encoding')
+    assert.strictEqual(res.headers['content-encoding'], 'gzip')
   })
 })
