@@ -59,6 +59,7 @@ Setting `options[encoding] = false` will disable that encoding.
 #### options<span></span>.br
 
 [Brotli compression](https://en.wikipedia.org/wiki/Brotli) is supported in node v11.7.0+, which includes it natively.
+As of v5.1.0, the default quality level is 4 for performance reasons.
 
 ### options.defaultEncoding\<String\>
 
