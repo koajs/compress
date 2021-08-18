@@ -274,25 +274,6 @@ describe('Compress', () => {
       .expect('asdf')
   })
 
-  test('should support Z_SYNC_FLUSH', async () => {
-    const app = new Koa()
-
-    app.use(compress({
-      flush: zlib.constants.Z_SYNC_FLUSH
-    }))
-    app.use(sendString)
-    server = app.listen()
-
-    const res = await request(server)
-      .get('/')
-      .expect(200)
-
-    assert.equal(res.headers['transfer-encoding'], 'chunked')
-    assert.equal(res.headers.vary, 'Accept-Encoding')
-    assert(!res.headers['content-length'])
-    assert.equal(res.text, string)
-  })
-
   describe('Cache-Control', () => {
     ['no-transform', 'public, no-transform', 'no-transform, private', 'no-transform , max-age=1000', 'max-age=1000 , no-transform'].forEach(headerValue => {
       test(`should skip Cache-Control: ${headerValue}`, async () => {
