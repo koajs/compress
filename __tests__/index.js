@@ -376,7 +376,6 @@ describe('Compress', () => {
 
   if (process.versions.brotli) {
     test('accept-encoding: br', async () => {
-
       const app = new Koa()
 
       app.use(compress())
