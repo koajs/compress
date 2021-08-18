@@ -387,4 +387,124 @@ describe('Compress', () => {
     assert.strictEqual(res.headers.vary, 'Accept-Encoding')
     assert.strictEqual(res.headers['content-encoding'], 'gzip')
   })
+
+  it('functional threshold: should not compress', (done) => {
+    const app = new Koa()
+
+    app.use(compress({
+      threshold: () => '1mb'
+    }))
+    app.use(sendString)
+    server = app.listen()
+
+    request(server)
+      .get('/')
+      .expect(200)
+      .end((err, res) => {
+        if (err) { return done(err) }
+
+        assert.equal(res.headers['content-length'], '2048')
+        assert.equal(res.headers.vary, 'Accept-Encoding')
+        assert(!res.headers['content-encoding'])
+        assert(!res.headers['transfer-encoding'])
+        assert.equal(res.text, string)
+
+        done()
+      })
+  })
+
+  it('functional compressors: should not compress', (done) => {
+    const app = new Koa()
+
+    app.use(compress({ br: false, gzip: (type, size) => /^text\//i.test(type) && size > 1000000 }))
+    app.use(sendBuffer)
+    server = app.listen()
+
+    request(server)
+      .get('/')
+      .set('Accept-Encoding', 'br, gzip')
+      .expect(200)
+      .end((err, res) => {
+        if (err) { return done(err) }
+
+        assert.equal(res.headers.vary, 'Accept-Encoding')
+        assert(!res.headers['content-encoding'])
+
+        done()
+      })
+  })
+
+  it('functional compressors: should compress with gzip', (done) => {
+    const app = new Koa()
+
+    app.use(compress({ br: false, gzip: false }))
+    app.use((ctx) => {
+      ctx.compress = { gzip: (type, size) => size < 1000000 }
+      ctx.body = string
+    })
+    server = app.listen()
+
+    request(server)
+      .get('/')
+      .set('Accept-Encoding', 'br, gzip')
+      .expect(200)
+      .end((err, res) => {
+        if (err) { return done(err) }
+
+        assert.equal(res.headers.vary, 'Accept-Encoding')
+        assert.equal(res.headers['content-encoding'], 'gzip')
+
+        done()
+      })
+  })
+
+  it('functional compressors: should NOT compress with gzip', (done) => {
+    const app = new Koa()
+
+    app.use(compress({ br: false, gzip: false }))
+    app.use((ctx) => {
+      ctx.compress = { gzip: (type, size) => size < 100 }
+      ctx.body = string
+    })
+    server = app.listen()
+
+    request(server)
+      .get('/')
+      .set('Accept-Encoding', 'br, gzip')
+      .expect(200)
+      .end((err, res) => {
+        if (err) { return done(err) }
+
+        assert.equal(res.headers.vary, 'Accept-Encoding')
+        assert(!res.headers['content-encoding'])
+
+        done()
+      })
+  })
+
+  it('functional compressors: should compress with br', (done) => {
+    if (!process.versions.brotli) return done()
+
+    const app = new Koa()
+
+    app.use(compress({ br: false, gzip: false }))
+    app.use((ctx) => {
+      ctx.compress = { gzip: () => false, br: () => true }
+      ctx.body = string
+    })
+    server = app.listen()
+
+    request(server)
+      .get('/')
+      .set('Accept-Encoding', 'br, gzip')
+      .expect(200)
+      .end((err, res) => {
+        if (err) { return done(err) }
+
+        assert.equal(res.headers.vary, 'Accept-Encoding')
+        assert.equal(res.headers['content-encoding'], 'br')
+
+        done()
+      })
+  })
 })
