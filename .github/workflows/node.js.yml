@@ -2,7 +2,9 @@ name: Node.js CI
 
 on:
   push:
+    branch: master
   pull_request:
+    branch: master
 
 jobs:
   build:
@@ -11,11 +13,7 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [10.x, 12.x, 13.x, 14.x]
-
-    env:
-      CI: true
-      CODECOV_TOKEN: fa9a6286-7613-4953-9446-b1af1aeba4d3
+        node-version: [12.x, 14.x, 16.x]
 
     steps:
     - uses: actions/checkout@v2
