@@ -27,6 +27,11 @@ app.use(compress({
 }))
 ```
 
+## Maintainers
+
+- Lead: @jonathanong [@jongleberry](https://twitter.com/jongleberry)
+- Team: @koajs/compress
+
 ## Options
 
 ### filter\<Function\>
