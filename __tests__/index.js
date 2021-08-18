@@ -24,29 +24,24 @@ describe('Compress', () => {
   let server
   afterEach(() => { if (server) server.close() })
 
-  it('should compress strings', (done) => {
+  test('should compress strings', async () => {
     const app = new Koa()
 
     app.use(compress())
     app.use(sendString)
     server = app.listen()
 
-    request(server)
+    const res = await request(server)
       .get('/')
       .expect(200)
-      .end((err, res) => {
-        if (err) { return done(err) }
 
-        assert.equal(res.headers['transfer-encoding'], 'chunked')
-        assert.equal(res.headers.vary, 'Accept-Encoding')
-        assert(!res.headers['content-length'])
-        assert.equal(res.text, string)
-
-        done()
-      })
+    assert.equal(res.headers['transfer-encoding'], 'chunked')
+    assert.equal(res.headers.vary, 'Accept-Encoding')
+    assert(!res.headers['content-length'])
+    assert.equal(res.text, string)
   })
 
-  it('should not compress strings below threshold', (done) => {
+  test('should not compress strings below threshold', async () => {
     const app = new Koa()
 
     app.use(compress({
@@ -55,23 +50,18 @@ describe('Compress', () => {
     app.use(sendString)
     server = app.listen()
 
-    request(server)
+    const res = await request(server)
       .get('/')
       .expect(200)
-      .end((err, res) => {
-        if (err) { return done(err) }
 
-        assert.equal(res.headers['content-length'], '2048')
-        assert.equal(res.headers.vary, 'Accept-Encoding')
-        assert(!res.headers['content-encoding'])
-        assert(!res.headers['transfer-encoding'])
-        assert.equal(res.text, string)
-
-        done()
-      })
+    assert.equal(res.headers['content-length'], '2048')
+    assert.equal(res.headers.vary, 'Accept-Encoding')
+    assert(!res.headers['content-encoding'])
+    assert(!res.headers['transfer-encoding'])
+    assert.equal(res.text, string)
   })
 
-  it('should compress JSON body', (done) => {
+  test('should compress JSON body', async () => {
     const app = new Koa()
     const jsonBody = { status: 200, message: 'ok', data: string }
 
@@ -81,22 +71,17 @@ describe('Compress', () => {
     })
     server = app.listen()
 
-    request(server)
+    const res = await request(server)
       .get('/')
       .expect(200)
-      .end((err, res) => {
-        if (err) { return done(err) }
 
-        assert.equal(res.headers['transfer-encoding'], 'chunked')
-        assert.equal(res.headers.vary, 'Accept-Encoding')
-        assert(!res.headers['content-length'])
-        assert.equal(res.text, JSON.stringify(jsonBody))
-
-        done()
-      })
+    assert.equal(res.headers['transfer-encoding'], 'chunked')
+    assert.equal(res.headers.vary, 'Accept-Encoding')
+    assert(!res.headers['content-length'])
+    assert.equal(res.text, JSON.stringify(jsonBody))
   })
 
-  it('should not compress JSON body below threshold', (done) => {
+  test('should not compress JSON body below threshold', async () => {
     const app = new Koa()
     const jsonBody = { status: 200, message: 'ok' }
 
@@ -106,43 +91,33 @@ describe('Compress', () => {
     })
     server = app.listen()
 
-    request(server)
+    const res = await request(server)
       .get('/')
       .expect(200)
-      .end((err, res) => {
-        if (err) { return done(err) }
 
-        assert.equal(res.headers.vary, 'Accept-Encoding')
-        assert(!res.headers['content-encoding'])
-        assert(!res.headers['transfer-encoding'])
-        assert.equal(res.text, JSON.stringify(jsonBody))
-
-        done()
-      })
+    assert.equal(res.headers.vary, 'Accept-Encoding')
+    assert(!res.headers['content-encoding'])
+    assert(!res.headers['transfer-encoding'])
+    assert.equal(res.text, JSON.stringify(jsonBody))
   })
 
-  it('should compress buffers', (done) => {
+  test('should compress buffers', async () => {
     const app = new Koa()
 
     app.use(compress())
     app.use(sendBuffer)
     server = app.listen()
 
-    request(server)
+    const res = await request(server)
       .get('/')
       .expect(200)
-      .end((err, res) => {
-        if (err) { return done(err) }
 
-        assert.equal(res.headers['transfer-encoding'], 'chunked')
-        assert.equal(res.headers.vary, 'Accept-Encoding')
-        assert(!res.headers['content-length'])
-
-        done()
-      })
+    assert.equal(res.headers['transfer-encoding'], 'chunked')
+    assert.equal(res.headers.vary, 'Accept-Encoding')
+    assert(!res.headers['content-length'])
   })
 
-  it('should compress streams', (done) => {
+  test('should compress streams', async () => {
     const app = new Koa()
 
     app.use(compress())
@@ -153,43 +128,33 @@ describe('Compress', () => {
     })
     server = app.listen()
 
-    request(server)
+    const res = await request(server)
       .get('/')
       .expect(200)
-      .end((err, res) => {
-        if (err) { return done(err) }
 
-        // res.should.have.header('Content-Encoding', 'gzip')
-        assert.equal(res.headers['transfer-encoding'], 'chunked')
-        assert.equal(res.headers.vary, 'Accept-Encoding')
-        assert(!res.headers['content-length'])
-
-        done()
-      })
+    // res.should.have.header('Content-Encoding', 'gzip')
+    assert.equal(res.headers['transfer-encoding'], 'chunked')
+    assert.equal(res.headers.vary, 'Accept-Encoding')
+    assert(!res.headers['content-length'])
   })
 
-  it('should compress when ctx.compress === true', (done) => {
+  test('should compress when ctx.compress === true', async () => {
     const app = new Koa()
 
     app.use(compress())
     app.use(sendBuffer)
     server = app.listen()
 
-    request(server)
+    const res = await request(server)
       .get('/')
       .expect(200)
-      .end((err, res) => {
-        if (err) { return done(err) }
 
-        assert.equal(res.headers['transfer-encoding'], 'chunked')
-        assert.equal(res.headers.vary, 'Accept-Encoding')
-        assert(!res.headers['content-length'])
-
-        done()
-      })
+    assert.equal(res.headers['transfer-encoding'], 'chunked')
+    assert.equal(res.headers.vary, 'Accept-Encoding')
+    assert(!res.headers['content-length'])
   })
 
-  it('should not compress when ctx.compress === false', (done) => {
+  test('should not compress when ctx.compress === false', async () => {
     const app = new Koa()
 
     app.use(compress())
@@ -199,53 +164,43 @@ describe('Compress', () => {
     })
     server = app.listen()
 
-    request(server)
+    const res = await request(server)
       .get('/')
       .expect(200)
-      .end((err, res) => {
-        if (err) { return done(err) }
 
-        assert.equal(res.headers['content-length'], '1024')
-        assert.equal(res.headers.vary, 'Accept-Encoding')
-        assert(!res.headers['content-encoding'])
-        assert(!res.headers['transfer-encoding'])
-
-        done()
-      })
+    assert.equal(res.headers['content-length'], '1024')
+    assert.equal(res.headers.vary, 'Accept-Encoding')
+    assert(!res.headers['content-encoding'])
+    assert(!res.headers['transfer-encoding'])
   })
 
-  it('should not compress HEAD requests', (done) => {
+  test('should not compress HEAD requests', async () => {
     const app = new Koa()
 
     app.use(compress())
     app.use(sendString)
     server = app.listen()
 
-    request(server)
+    const res = await request(server)
       .head('/')
-      .expect(200, (err, res) => {
-        if (err) { return done(err) }
 
-        assert(!res.headers['content-encoding'])
-
-        done()
-      })
+    assert(!res.headers['content-encoding'])
   })
 
-  it('should not crash even if accept-encoding: sdch', (done) => {
+  test('should not crash even if accept-encoding: sdch', () => {
     const app = new Koa()
 
     app.use(compress())
     app.use(sendBuffer)
     server = app.listen()
 
-    request(server)
+    return request(server)
       .get('/')
       .set('Accept-Encoding', 'sdch, gzip, deflate')
-      .expect(200, done)
+      .expect(200)
   })
 
-  it('should not compress if no accept-encoding is sent (with the default)', (done) => {
+  test('should not compress if no accept-encoding is sent (with the default)', async () => {
     const app = new Koa()
     app.use(compress({
       threshold: 0
@@ -256,22 +211,17 @@ describe('Compress', () => {
     })
     server = app.listen()
 
-    request(server)
+    const res = await request(server)
       .get('/')
       .set('Accept-Encoding', '')
-      .end((err, res) => {
-        if (err) { return done(err) }
 
-        assert(!res.headers['content-encoding'])
-        assert(!res.headers['transfer-encoding'])
-        assert.equal(res.headers['content-length'], '1024')
-        assert.equal(res.headers.vary, 'Accept-Encoding')
-
-        done()
-      })
+    assert(!res.headers['content-encoding'])
+    assert(!res.headers['transfer-encoding'])
+    assert.equal(res.headers['content-length'], '1024')
+    assert.equal(res.headers.vary, 'Accept-Encoding')
   })
 
-  it('should be gzip if no accept-encoding is sent (with the standard default)', (done) => {
+  test('should be gzip if no accept-encoding is sent (with the standard default)', async () => {
     const app = new Koa()
     app.use(compress({
       threshold: 0,
@@ -283,20 +233,15 @@ describe('Compress', () => {
     })
     server = app.listen()
 
-    request(server)
+    const res = await request(server)
       .get('/')
       .set('Accept-Encoding', '')
-      .end((err, res) => {
-        if (err) { return done(err) }
 
-        assert.equal(res.headers['content-encoding'], 'gzip')
-        assert.equal(res.headers.vary, 'Accept-Encoding')
-
-        done()
-      })
+    assert.equal(res.headers['content-encoding'], 'gzip')
+    assert.equal(res.headers.vary, 'Accept-Encoding')
   })
 
-  it('should not crash if a type does not pass the filter', (done) => {
+  test('should not crash if a type does not pass the filter', () => {
     const app = new Koa()
 
     app.use(compress())
@@ -306,12 +251,12 @@ describe('Compress', () => {
     })
     server = app.listen()
 
-    request(server)
+    return request(server)
       .get('/')
-      .expect(200, done)
+      .expect(200)
   })
 
-  it('should not compress when transfer-encoding is already set', (done) => {
+  test('should not compress when transfer-encoding is already set', () => {
     const app = new Koa()
 
     app.use(compress({
@@ -324,12 +269,12 @@ describe('Compress', () => {
     })
     server = app.listen()
 
-    request(server)
+    return request(server)
       .get('/')
-      .expect('asdf', done)
+      .expect('asdf')
   })
 
-  it('should support Z_SYNC_FLUSH', (done) => {
+  test('should support Z_SYNC_FLUSH', async () => {
     const app = new Koa()
 
     app.use(compress({
@@ -338,25 +283,19 @@ describe('Compress', () => {
     app.use(sendString)
     server = app.listen()
 
-    request(server)
+    const res = await request(server)
       .get('/')
       .expect(200)
-      .end((err, res) => {
-        if (err) { return done(err) }
 
-        // res.should.have.header('Content-Encoding', 'gzip')
-        assert.equal(res.headers['transfer-encoding'], 'chunked')
-        assert.equal(res.headers.vary, 'Accept-Encoding')
-        assert(!res.headers['content-length'])
-        assert.equal(res.text, string)
-
-        done()
-      })
+    assert.equal(res.headers['transfer-encoding'], 'chunked')
+    assert.equal(res.headers.vary, 'Accept-Encoding')
+    assert(!res.headers['content-length'])
+    assert.equal(res.text, string)
   })
 
   describe('Cache-Control', () => {
     ['no-transform', 'public, no-transform', 'no-transform, private', 'no-transform , max-age=1000', 'max-age=1000 , no-transform'].forEach(headerValue => {
-      it(`should skip Cache-Control: ${headerValue}`, done => {
+      test(`should skip Cache-Control: ${headerValue}`, async () => {
         const app = new Koa()
 
         app.use(compress())
@@ -367,25 +306,20 @@ describe('Compress', () => {
         app.use(sendString)
         server = app.listen()
 
-        request(server)
+        const res = await request(server)
           .get('/')
           .expect(200)
-          .end((err, res) => {
-            if (err) { return done(err) }
 
-            assert.equal(res.headers['content-length'], '2048')
-            assert.equal(res.headers.vary, 'Accept-Encoding')
-            assert(!res.headers['content-encoding'])
-            assert(!res.headers['transfer-encoding'])
-            assert.equal(res.text, string)
-
-            done()
-          })
+        assert.equal(res.headers['content-length'], '2048')
+        assert.equal(res.headers.vary, 'Accept-Encoding')
+        assert(!res.headers['content-encoding'])
+        assert(!res.headers['transfer-encoding'])
+        assert.equal(res.text, string)
       })
     });
 
     ['not-no-transform', 'public', 'no-transform-thingy'].forEach(headerValue => {
-      it(`should not skip Cache-Control: ${headerValue}`, done => {
+      test(`should not skip Cache-Control: ${headerValue}`, async () => {
         const app = new Koa()
 
         app.use(compress())
@@ -396,106 +330,82 @@ describe('Compress', () => {
         app.use(sendString)
         server = app.listen()
 
-        request(server)
+        const res = await request(server)
           .get('/')
           .expect(200)
-          .end((err, res) => {
-            if (err) { return done(err) }
 
-            assert.equal(res.headers['transfer-encoding'], 'chunked')
-            assert.equal(res.headers.vary, 'Accept-Encoding')
-            assert(!res.headers['content-length'])
-            assert.equal(res.text, string)
-
-            done()
-          })
+        assert.equal(res.headers['transfer-encoding'], 'chunked')
+        assert.equal(res.headers.vary, 'Accept-Encoding')
+        assert(!res.headers['content-length'])
+        assert.equal(res.text, string)
       })
     })
   })
 
-  it('accept-encoding: deflate', (done) => {
+  test('accept-encoding: deflate', async () => {
     const app = new Koa()
 
     app.use(compress())
     app.use(sendBuffer)
     server = app.listen()
 
-    request(server)
+    const res = await request(server)
       .get('/')
       .set('Accept-Encoding', 'deflate')
       .expect(200)
-      .end((err, res) => {
-        if (err) { return done(err) }
 
-        assert.equal(res.headers.vary, 'Accept-Encoding')
-        assert.equal(res.headers['content-encoding'], 'deflate')
-
-        done()
-      })
+    assert.equal(res.headers.vary, 'Accept-Encoding')
+    assert.equal(res.headers['content-encoding'], 'deflate')
   })
 
-  it('accept-encoding: gzip', (done) => {
+  test('accept-encoding: gzip', async () => {
     const app = new Koa()
 
     app.use(compress())
     app.use(sendBuffer)
     server = app.listen()
 
-    request(server)
+    const res = await request(server)
       .get('/')
       .set('Accept-Encoding', 'gzip, deflate')
       .expect(200)
-      .end((err, res) => {
-        if (err) { return done(err) }
 
-        assert.equal(res.headers.vary, 'Accept-Encoding')
-        assert.equal(res.headers['content-encoding'], 'gzip')
-
-        done()
-      })
+    assert.equal(res.headers.vary, 'Accept-Encoding')
+    assert.equal(res.headers['content-encoding'], 'gzip')
   })
 
-  it('accept-encoding: br', (done) => {
-    if (!process.versions.brotli) return done()
+  if (process.versions.brotli) {
+    test('accept-encoding: br', async () => {
 
-    const app = new Koa()
+      const app = new Koa()
 
-    app.use(compress())
-    app.use(sendBuffer)
-    server = app.listen()
+      app.use(compress())
+      app.use(sendBuffer)
+      server = app.listen()
 
-    request(server)
-      .get('/')
-      .set('Accept-Encoding', 'br')
-      .expect(200)
-      .end((err, res) => {
-        if (err) { return done(err) }
+      const res = await request(server)
+        .get('/')
+        .set('Accept-Encoding', 'br')
+        .expect(200)
 
-        assert.equal(res.headers.vary, 'Accept-Encoding')
-        assert.equal(res.headers['content-encoding'], 'br')
+      assert.equal(res.headers.vary, 'Accept-Encoding')
+      assert.equal(res.headers['content-encoding'], 'br')
+    })
+  }
 
-        done()
-      })
-  })
-
-  it('accept-encoding: br (banned, should be gzip)', (done) => {
+  test('accept-encoding: br (banned, should be gzip)', async () => {
     const app = new Koa()
 
     app.use(compress({ br: false }))
     app.use(sendBuffer)
     server = app.listen()
 
-    request(server)
+    const res = await request(server)
       .get('/')
       .set('Accept-Encoding', 'gzip, deflate, br')
       .expect(200)
-      .end((err, res) => {
-        if (err) { return done(err) }
 
-        assert.equal(res.headers.vary, 'Accept-Encoding')
-        assert.equal(res.headers['content-encoding'], 'gzip')
-
-        done()
-      })
+    assert.equal(res.headers.vary, 'Accept-Encoding')
+    assert.equal(res.headers['content-encoding'], 'gzip')
   })
 })
