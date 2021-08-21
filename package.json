@@ -17,7 +17,6 @@
     "koa-is-json": "^1.0.0"
   },
   "devDependencies": {
-    "babel-eslint": "^10.1.0",
     "eslint": "^7.32.0",
     "eslint-config-standard": "^16.0.3",
     "eslint-plugin-import": "^2.24.0",
