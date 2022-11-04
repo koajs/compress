@@ -21,7 +21,8 @@
     "bytes": "^3.1.2",
     "compressible": "^2.0.18",
     "http-errors": "^1.8.1",
-    "koa-is-json": "^1.0.0"
+    "koa-is-json": "^1.0.0",
+    "yieldable-json": "^2.0.1"
   },
   "devDependencies": {
     "eslint": "^7.32.0",
