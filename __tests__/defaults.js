@@ -8,5 +8,5 @@ test('default brotli param quality should be 4', () => {
   const middleware = createCompressMiddleware()
   assert(Array.isArray(middleware.preferredEncodings))
   assert(middleware.encodingOptions)
-  assert.strictEqual(middleware.encodingOptions.br[zlib.constants.BROTLI_PARAM_QUALITY], 4)
+  assert.strictEqual(middleware.encodingOptions.br.params[zlib.constants.BROTLI_PARAM_QUALITY], 4)
 })
