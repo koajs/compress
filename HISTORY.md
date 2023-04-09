@@ -1,3 +1,4 @@
+SEE https://github.com/koajs/compress/releases
 
 4.0.1 / 2020-04-29
 ==================
