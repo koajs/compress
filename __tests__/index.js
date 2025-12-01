@@ -372,6 +372,42 @@ describe('Compress', () => {
     })
   }
 
+  // Check if zstd is available in Node.js version
+  const zstdAvailable = typeof require('zlib').createZstdCompress === 'function'
+  if (zstdAvailable) {
+    test('accept-encoding: zstd', async () => {
+      const app = new Koa()
+
+      app.use(compress())
+      app.use(sendBuffer)
+      server = app.listen()
+
+      const res = await request(server)
+        .get('/')
+        .set('Accept-Encoding', 'zstd')
+        .expect(200)
+
+      assert.strictEqual(res.headers.vary, 'Accept-Encoding')
+      assert.strictEqual(res.headers['content-encoding'], 'zstd')
+    })
+
+    test('accept-encoding: gzip, zstd (prefer zstd)', async () => {
+      const app = new Koa()
+
+      app.use(compress())
+      app.use(sendBuffer)
+      server = app.listen()
+
+      const res = await request(server)
+        .get('/')
+        .set('Accept-Encoding', 'gzip, zstd')
+        .expect(200)
+
+      assert.strictEqual(res.headers.vary, 'Accept-Encoding')
+      assert.strictEqual(res.headers['content-encoding'], 'zstd')
+    })
+  }
+
   test('accept-encoding: br (banned, should be gzip)', async () => {
     const app = new Koa()
 
@@ -387,6 +423,25 @@ describe('Compress', () => {
     assert.strictEqual(res.headers.vary, 'Accept-Encoding')
     assert.strictEqual(res.headers['content-encoding'], 'gzip')
   })
+
+  if (zstdAvailable) {
+    test('accept-encoding: zstd (banned, should be br or gzip)', async () => {
+      const app = new Koa()
+
+      app.use(compress({ zstd: false }))
+      app.use(sendBuffer)
+      server = app.listen()
+
+      const res = await request(server)
+        .get('/')
+        .set('Accept-Encoding', 'gzip, deflate, br, zstd')
+        .expect(200)
+
+      assert.strictEqual(res.headers.vary, 'Accept-Encoding')
+      // Should be br if available, otherwise gzip
+      assert.ok(res.headers['content-encoding'] === 'br' || res.headers['content-encoding'] === 'gzip')
+    })
+  }
 
   it('functional threshold: should not compress', (done) => {
     const app = new Koa()
@@ -507,4 +562,30 @@ describe('Compress', () => {
         done()
       })
   })
+
+  if (zstdAvailable) {
+    it('functional compressors: should compress with zstd', (done) => {
+      const app = new Koa()
+
+      app.use(compress({ br: false, gzip: false, zstd: false }))
+      app.use((ctx) => {
+        ctx.compress = { gzip: () => false, br: () => false, zstd: () => true }
+        ctx.body = string
+      })
+      server = app.listen()
+
+      request(server)
+        .get('/')
+        .set('Accept-Encoding', 'br, gzip, zstd')
+        .expect(200)
+        .end((err, res) => {
+          if (err) { return done(err) }
+
+          assert.equal(res.headers.vary, 'Accept-Encoding')
+          assert.equal(res.headers['content-encoding'], 'zstd')
+
+          done()
+        })
+    })
+  }
 })

@@ -23,6 +23,9 @@ app.use(compress({
   deflate: {
     flush: require('zlib').constants.Z_SYNC_FLUSH,
   },
+  zstd: {
+    flush: require('zlib').constants.Z_SYNC_FLUSH
+  },
   br: false // disable brotli
 }))
 ```
@@ -52,7 +55,7 @@ Default `1024` bytes or `1kb`.
 
 ### options[encoding]\<Object|Function\>
 
-The current encodings are, in order of preference: `br`, `gzip`, `deflate`.
+The current encodings are, in order of preference: `br`, `zstd`, `gzip`, `deflate`.
 Setting `options[encoding] = {}` will pass those options to the encoding function.
 Setting `options[encoding] = false` will disable that encoding.
 
@@ -62,6 +65,10 @@ It can be a function that returns options (see below).
 
 [Brotli compression](https://en.wikipedia.org/wiki/Brotli) is supported in node v11.7.0+, which includes it natively.
 As of v5.1.0, the default quality level is 4 for performance reasons.
+
+### options.zstd
+
+[Zstandard compression](https://en.wikipedia.org/wiki/Zstandard) is natively supported in the Node.js API. Minimum supported version: `v22.15.0` (LTS); also available on the Current line starting from `v23.8.0+`. This middleware performs runtime feature detection for `zlib.createZstdCompress`; if present, Zstd is enabled, otherwise it is skipped—no version configuration required.
 
 ### options.defaultEncoding\<String\>
 
