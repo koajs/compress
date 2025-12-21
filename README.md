@@ -66,7 +66,7 @@ It can be a function that returns options (see below).
 [Brotli compression](https://en.wikipedia.org/wiki/Brotli) is supported in node v11.7.0+, which includes it natively.
 As of v5.1.0, the default quality level is 4 for performance reasons.
 
-### options.zstd
+#### options.zstd
 
 [Zstandard compression](https://en.wikipedia.org/wiki/Zstandard) is natively supported in the Node.js API. Minimum supported version: `v22.15.0` (LTS); also available on the Current line starting from `v23.8.0+`. This middleware performs runtime feature detection for `zlib.createZstdCompress`; if present, Zstd is enabled, otherwise it is skipped—no version configuration required.
 
