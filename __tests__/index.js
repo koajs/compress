@@ -589,6 +589,121 @@ describe('Compress', () => {
     })
   }
 
+  it('should respect weighted encodings', (done) => {
+    const app = new Koa()
+
+    app.use(compress())
+    app.use((ctx) => {
+      ctx.body = string
+    })
+    server = app.listen()
+
+    request(server)
+      .get('/')
+      .set('Accept-Encoding', 'identity;q=1, *;q=0')
+      .expect(200)
+      .end((err, res) => {
+        if (err) { return done(err) }
+
+        assert.equal(res.headers.vary, 'Accept-Encoding')
+        assert(!res.headers['content-encoding'])
+
+        done()
+      })
+  })
+
+  it('should respect weighted encodings: gzip', (done) => {
+    const app = new Koa()
+
+    app.use(compress())
+    app.use((ctx) => {
+      ctx.body = string
+    })
+    server = app.listen()
+
+    request(server)
+      .get('/')
+      .set('Accept-Encoding', 'br;q=0.5, gzip;q=0.75')
+      .expect(200)
+      .end((err, res) => {
+        if (err) { return done(err) }
+
+        assert.equal(res.headers.vary, 'Accept-Encoding')
+        assert.equal(res.headers['content-encoding'], 'gzip')
+
+        done()
+      })
+  })
+
+  it('should respect weighted encodings: br', (done) => {
+    const app = new Koa()
+
+    app.use(compress())
+    app.use((ctx) => {
+      ctx.body = string
+    })
+    server = app.listen()
+
+    request(server)
+      .get('/')
+      .set('Accept-Encoding', 'br;q=0.9, gzip;q=0.75')
+      .expect(200)
+      .end((err, res) => {
+        if (err) { return done(err) }
+
+        assert.equal(res.headers.vary, 'Accept-Encoding')
+        assert.equal(res.headers['content-encoding'], 'br')
+
+        done()
+      })
+  })
+
+  it('should respect weighted encodings: br (equal weights)', (done) => {
+    const app = new Koa()
+
+    app.use(compress())
+    app.use((ctx) => {
+      ctx.body = string
+    })
+    server = app.listen()
+
+    request(server)
+      .get('/')
+      .set('Accept-Encoding', 'gzip;q=0.75, br;q=0.75')
+      .expect(200)
+      .end((err, res) => {
+        if (err) { return done(err) }
+
+        assert.equal(res.headers.vary, 'Accept-Encoding')
+        assert.equal(res.headers['content-encoding'], 'br')
+
+        done()
+      })
+  })
+
+  it('should respect encoding preference', (done) => {
+    const app = new Koa()
+
+    app.use(compress({ encodingPreference: ['deflate', 'gzip', 'br'] }))
+    app.use((ctx) => {
+      ctx.body = string
+    })
+    server = app.listen()
+
+    request(server)
+      .get('/')
+      .set('Accept-Encoding', 'gzip;q=0.75, br;q=0.75, deflate;q=0.25')
+      .expect(200)
+      .end((err, res) => {
+        if (err) { return done(err) }
+
+        assert.equal(res.headers.vary, 'Accept-Encoding')
+        assert.equal(res.headers['content-encoding'], 'gzip')
+
+        done()
+      })
+  })
+
   // coverage tests
 
   test('should be identity if bad defaultEncoding', async () => {
