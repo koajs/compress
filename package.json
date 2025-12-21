@@ -2,6 +2,7 @@
   "name": "koa-compress",
   "description": "Compress middleware for koa",
   "version": "5.1.1",
+  "type": "commonjs",
   "author": {
     "name": "Jonathan Ong",
     "email": "me@jongleberry.com",
@@ -21,7 +22,8 @@
     "bytes": "^3.1.2",
     "compressible": "^2.0.18",
     "http-errors": "^2.0.1",
-    "koa-is-json": "^1.0.0"
+    "koa-is-json": "^1.0.0",
+    "negotiator": "^1.0.0"
   },
   "devDependencies": {
     "c8": "^10.1.3",
