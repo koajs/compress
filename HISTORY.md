@@ -1,5 +1,36 @@
 SEE https://github.com/koajs/compress/releases
 
+5.2.0 / 2026-02-10
+==================
+
+* add functional and local options
+* updated dependencies
+* copied the project setup from Koa
+* add zstd
+* use `negotiator` for content negotiation
+* add TypeScript typings and tests
+
+5.1.1 / 2023-04-08
+==================
+
+* minor refactoring + updated dependencies
+
+5.1.0 / 2021-08-17
+==================
+
+* change brotli defaults (compression level to 4)
+* updated dependencies
+
+5.0.1 / 2020-07-06
+==================
+
+* updated to accomodate Node changes: zlib constants were moved to a different namespace
+
+5.0.0 / 2020-07-05
+==================
+
+ * add `defaultEncoding`
+
 4.0.1 / 2020-04-29
 ==================
 
