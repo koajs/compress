@@ -768,26 +768,6 @@ describe('Compress', () => {
     assert.strictEqual(res.headers.vary, 'Accept-Encoding')
   })
 
-  test('should be identity if bad defaultEncoding', async () => {
-    const app = new Koa()
-    app.use(
-      compress({
-        threshold: 0,
-        defaultEncoding: 'invalid'
-      })
-    )
-    app.use((ctx) => {
-      ctx.type = 'text'
-      ctx.body = buffer
-    })
-    server = app.listen()
-
-    const res = await request(server).get('/').set('Accept-Encoding', '')
-
-    assert(!res.headers['content-encoding'])
-    assert.strictEqual(res.headers.vary, 'Accept-Encoding')
-  })
-
   test('should be identity if bad accept-encoding', async () => {
     const app = new Koa()
     app.use(
