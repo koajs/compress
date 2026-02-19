@@ -120,7 +120,7 @@ export type CompressOptions = {
  * @param options sets the default way to handle compression.
  * @returns a middleware function that compresses responses.
  */
-declare function compress(options: CompressOptions = {}): Koa.Middleware;
+declare function compress(options?: CompressOptions): Koa.Middleware;
 
 declare module "koa" {
   interface DefaultContext {
@@ -134,4 +134,4 @@ declare module "koa" {
   }
 }
 
-export = compress;
+export default compress;
