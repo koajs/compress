@@ -788,4 +788,46 @@ describe('Compress', () => {
     assert(!res.headers['content-encoding'])
     assert.strictEqual(res.headers.vary, 'Accept-Encoding')
   })
+
+  test('boolean options for encodings: true', async () => {
+    const app = new Koa()
+    app.use(
+      compress({
+        zstd: true,
+        br: true
+      })
+    )
+    app.use((ctx) => {
+      ctx.type = 'text'
+      ctx.body = buffer
+    })
+    server = app.listen()
+
+    const res = await request(server)
+      .get('/')
+      .set('Accept-Encoding', 'zstd, br, gzip')
+
+    assert(res.headers['content-encoding'] === 'zstd' || res.headers['content-encoding'] === 'br' || res.headers['content-encoding'] === 'gzip')
+  })
+
+  test('boolean options for encodings: false', async () => {
+    const app = new Koa()
+    app.use(
+      compress({
+        zstd: false,
+        br: false
+      })
+    )
+    app.use((ctx) => {
+      ctx.type = 'text'
+      ctx.body = buffer
+    })
+    server = app.listen()
+
+    const res = await request(server)
+      .get('/')
+      .set('Accept-Encoding', 'zstd, br, gzip')
+
+    assert(res.headers['content-encoding'] === 'gzip')
+  })
 })
