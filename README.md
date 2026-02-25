@@ -42,51 +42,49 @@ app.use(
 ### filter\<Function\>
 
 ```ts
-function (mimeType: string): Boolean {
-
-}
+function (mimeType: string): boolean {}
 ```
 
-An optional function that checks the response content type to decide whether to compress.
-By default, it uses [compressible](https://github.com/jshttp/compressible).
+A predicate that checks the response MIME type to decide whether to compress.
+Default: [compressible](https://github.com/jshttp/compressible).
 
 ### options.threshold\<String|Number|Function\>
 
-Minimum response size in bytes to compress or a function that returns such response (see below).
-Default `1024` bytes or `1kb`.
+Minimum response size in bytes to compress.
+Can also be a string parsed by `bytes()` (e.g. `"1kb"`) or a function (see [Functional properties](#functional-properties)).
+Default: `1024`.
 
 ### options[encoding]\<Object|Function\>
 
-The current encodings are, in order of preference: `br`, `zstd`, `gzip`, `deflate`.
-Setting `options[encoding] = {}` will pass those options to the encoding function.
-Setting `options[encoding] = false` will disable that encoding.
+Supported encodings in default preference order: `zstd`, `br`, `gzip`, `deflate`.
+Setting `options[encoding] = {}` passes those options to the corresponding `zlib` compressor.
+Setting `options[encoding] = false` disables that encoding.
 
-It can be a function that returns options (see below).
+Can also be a function (see [Functional properties](#functional-properties)).
 
 #### options.br
 
-[Brotli compression](https://en.wikipedia.org/wiki/Brotli) is supported in node v11.7.0+, which includes it natively.
-As of v5.1.0, the default quality level is 4 for performance reasons.
+[Brotli compression](https://en.wikipedia.org/wiki/Brotli) is available natively in all supported Node.js versions.
+The default quality level is 4 for performance reasons.
 
 #### options.zstd
 
-[Zstandard compression](https://en.wikipedia.org/wiki/Zstandard) is natively supported in the Node.js API. Minimum supported version: `v22.15.0` (LTS); also available on the Current line starting from `v23.8.0+`. This middleware performs runtime feature detection for `zlib.createZstdCompress`; if present, Zstd is enabled, otherwise it is skipped—no version configuration required.
+[Zstandard compression](https://en.wikipedia.org/wiki/Zstandard) is natively supported starting from Node.js v22.15.0 (LTS) and v23.8.0 (Current). The middleware detects `zlib.createZstdCompress` at runtime; if available, zstd is enabled automatically, otherwise it is skipped.
 
 ### options.defaultEncoding\<String\>
 
-An optional string, which specifies what encoders to use for requests without
-[Accept-Encoding](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Accept-Encoding).
-Default `identity`.
+Encoding assumed when the client sends no
+[Accept-Encoding](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Accept-Encoding) header.
+Default: `"identity"` (no compression).
 
-The standard dictates to treat such requests as `*` meaning that all compressions are permissible,
-yet it causes very practical problems when debugging servers with manual tools like `curl`, `wget`, and so on.
-If you want to enable the standard behavior, just set `defaultEncoding` to `*`.
+The HTTP spec treats a missing header as `*` (any encoding is acceptable),
+but that causes problems when debugging with tools like `curl` or `wget`.
+Set `defaultEncoding` to `"*"` to restore spec-compliant behavior.
 
 ## Manually turning compression on and off
 
-You can always enable compression by setting `ctx.compress = true`.
-You can always disable compression by setting `ctx.compress = false`.
-This bypasses the filter check.
+You can force compression by setting `ctx.compress = true` (bypasses the filter check).
+You can disable compression by setting `ctx.compress = false`.
 
 ```js
 app.use((ctx, next) => {
@@ -95,32 +93,31 @@ app.use((ctx, next) => {
 });
 ```
 
-`ctx.compress` can be an object similar to `options` above, whose properties (`threshold` and encoding options)
-override the global `options` for this response and bypass the filter check.
+`ctx.compress` can also be an options object (same shape as the middleware options).
+Its `threshold` and encoding properties override the global defaults for this response.
+Note: an options object does **not** bypass the filter check — only `true` does.
 
 ## Functional properties
 
-Certain properties (`threshold` and encoding options) can be specified as functions. Such functions will be called
+The `threshold` and per-encoding options can be functions. They are called
 for every response with three arguments:
 
-- `type` &mdash; the same as `ctx.response.type` (provided for convenience)
-- `size` &mdash; the same as `ctx.response.length` (provided for convenience)
-- `ctx` &mdash; the whole context object, if you want to do something unique
+- `type` &mdash; same as `ctx.response.type`
+- `size` &mdash; same as `ctx.response.length`
+- `ctx` &mdash; the full Koa context object
 
-It should return a valid value for that property. It is possible to return a function of the same shape,
-which will be used to calculate the actual property.
+The function should return a valid value for that property.
+Returning another function of the same shape is allowed — it will be called in turn.
 
 Example:
 
 ```js
-app.use((ctx, next) => {
-  // ...
-  ctx.compress = (type, size, ctx) => ({
-    br: size && size >= 65536,
-    gzip: size && size < 65536,
-  });
-  ctx.body = payload;
-});
+app.use(
+  compress({
+    gzip: (type, size) => (size && size < 65536 ? { level: 9 } : false),
+    br: (type, size) => size && size >= 65536,
+  }),
+);
 ```
 
-Read all about `ctx` in https://koajs.com/#context and `ctx.response` in https://koajs.com/#response
+See the Koa documentation for [`ctx`](https://koajs.com/#context) and [`ctx.response`](https://koajs.com/#response).

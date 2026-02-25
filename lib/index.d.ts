@@ -3,8 +3,8 @@ import type Koa = require("koa");
 
 declare namespace compress {
   /**
-   * Function to calculate a threshold value dynamically from a MIME type,
-   * an existing size and the current context.
+   * Calculates a threshold value dynamically from the MIME type,
+   * the response size, and the current context.
    */
   type ThresholdFunction = (
     /** MIME type of the response */
@@ -16,8 +16,8 @@ declare namespace compress {
   ) => number | string | ThresholdFunction;
 
   /**
-   * Function to calculate compression parameters for `deflate` and `gzip` from a MIME type,
-   * an existing size and the current context.
+   * Computes `deflate`/`gzip` compression options from the MIME type,
+   * the response size, and the current context.
    */
   type ZlibOptionsFunction = (
     /** MIME type of the response */
@@ -29,8 +29,8 @@ declare namespace compress {
   ) => boolean | null | ZlibOptions | ZlibOptionsFunction;
 
   /**
-   * Function to calculate compression parameters for `brotli` from a MIME type,
-   * an existing size and the current context.
+   * Computes `brotli` compression options from the MIME type,
+   * the response size, and the current context.
    */
   type BrotliOptionsFunction = (
     /** MIME type of the response */
@@ -42,8 +42,8 @@ declare namespace compress {
   ) => boolean | null | BrotliOptions | BrotliOptionsFunction;
 
   /**
-   * Function to calculate compression parameters for `zstd` from a MIME type,
-   * an existing size and the current context.
+   * Computes `zstd` compression options from the MIME type,
+   * the response size, and the current context.
    */
   type ZstdOptionsFunction = (
     /** MIME type of the response */
@@ -55,112 +55,105 @@ declare namespace compress {
   ) => boolean | null | ZstdOptions | ZstdOptionsFunction;
 
   /**
-   * Compression options that govern how `koa/compress` handles responses.
+   * Options for the `koa-compress` middleware.
    */
   type CompressOptions = {
     /**
-     * Function to determine if compression should be applied.
+     * Predicate that decides whether a given MIME type should be compressed.
      * Default: `compressible()`.
-     * @param type MIME type of the response
-     * @returns `true` if compression should be applied, `false` otherwise
+     * @param type - MIME type of the response
+     * @returns `true` to compress, `false` to skip
      */
     filter?: (type: string) => boolean;
     /**
-     * Lower limit to apply compression to content. If it is a number, it is size in bytes,
-     * if it is a string, it is a human-readable size accepted by `bytes()`, e.g., `"1mb"`,
-     * or a `ThresholdFunction` that can calculate that value. Default: `1024`.
+     * Minimum response size to compress. A number (bytes), a string
+     * parsed by `bytes()` (e.g. `"1mb"`), or a {@link ThresholdFunction}.
+     * Default: `1024`.
      */
     threshold?: number | string | ThresholdFunction;
     /**
-     * Default value for `Accept-Encoding` header, if it is not supplied by the client.
-     * Default: `"identity"`.
+     * Encoding assumed when the client sends no `Accept-Encoding` header.
+     * Set to `"*"` for spec-compliant behavior. Default: `"identity"`.
      */
     defaultEncoding?: string;
     /**
-     * What `Accept-Encoding` value should be assumed if it is set to `"*"`. Default: `"gzip"`.
+     * Encoding to use when `Accept-Encoding` is `"*"`. Default: `"gzip"`.
      */
     wildcardAcceptEncoding?: string;
     /**
-     * An array of compression types, which should be used when we have multiple choices
-     * with the same weight. An item with a lower index has higher priority.
+     * Preferred encoding order used to break ties among equally weighted
+     * encodings. Lower index = higher priority.
      * Default: `['zstd', 'br', 'gzip', 'deflate', 'identity']`.
      */
     encodingPreference?: string[];
     /**
-     * Options to use when compressing with `deflate()`.
-     * If it is `false` or `null` this compression should be disabled.
-     * It can be a function used to calculate such values.
+     * Options passed to `zlib.createDeflate()`, or `false`/`null` to disable.
+     * Can be a {@link ZlibOptionsFunction} for per-response values.
      * Default: `{}`.
      */
     deflate?: boolean | null | ZlibOptions | ZlibOptionsFunction;
     /**
-     * Options to use when compressing with `gzip()`.
-     * If it is `false` or `null` this compression should be disabled.
-     * It can be a function used to calculate such values.
+     * Options passed to `zlib.createGzip()`, or `false`/`null` to disable.
+     * Can be a {@link ZlibOptionsFunction} for per-response values.
      * Default: `{}`.
      */
     gzip?: boolean | null | ZlibOptions | ZlibOptionsFunction;
     /**
-     * Options to use when compressing with `br()`.
-     * If it is `false` or `null` this compression should be disabled.
-     * It can be a function used to calculate such values.
+     * Options passed to `zlib.createBrotliCompress()`, or `false`/`null` to disable.
+     * Can be a {@link BrotliOptionsFunction} for per-response values.
      * Default: `{params: {[zlib.constants.BROTLI_PARAM_QUALITY]: 4}}`.
      */
     br?: boolean | null | BrotliOptions | BrotliOptionsFunction;
     /**
-     * Options to use when compressing with `zstd()`.
-     * If it is `false` or `null` this compression should be disabled.
-     * It can be a function used to calculate such values.
+     * Options passed to `zlib.createZstdCompress()`, or `false`/`null` to disable.
+     * Can be a {@link ZstdOptionsFunction} for per-response values.
      * Default: `{}`.
      */
     zstd?: boolean | null | ZstdOptions | ZstdOptionsFunction;
   };
 
   /**
-   * Encoding options computed by the middleware: default options merged with
-   * user-provided options for each supported encoding.
+   * Per-encoding options: built-in defaults merged with user-supplied values.
    */
   type EncodingOptions = {
     [encoding: string]: BrotliOptions | ZlibOptions | ZstdOptions | undefined;
   };
 
   /**
-   * Koa middleware function with additional properties exposed for introspection.
+   * Koa middleware with additional properties for introspection.
    */
   interface CompressMiddleware extends Koa.Middleware {
     /**
-     * The list of supported content encodings, filtered to those available
-     * in the current Node.js runtime. Encodings earlier in the list are
-     * preferred when the client has no preference.
+     * Supported content encodings available in the current Node.js runtime,
+     * ordered by preference.
      */
     preferredEncodings: string[];
     /**
-     * The resolved encoding options for each supported encoding.
-     * Each entry is the result of merging the built-in defaults
-     * with the user-provided options for that encoding.
+     * Resolved options for each supported encoding (built-in defaults
+     * merged with user-provided values).
      */
     encodingOptions: EncodingOptions;
   }
 }
 
 /**
- * Creates a Koa middleware that compresses response bodies using content
- * negotiation. The returned middleware function also exposes
+ * Creates a Koa middleware that compresses response bodies via content
+ * negotiation. The returned function also exposes
  * {@link compress.CompressMiddleware.preferredEncodings | preferredEncodings} and
- * {@link compress.CompressMiddleware.encodingOptions | encodingOptions} for introspection.
+ * {@link compress.CompressMiddleware.encodingOptions | encodingOptions}.
  *
- * @param options - Compression options that set the default behavior.
- * @returns A Koa middleware function with additional properties.
+ * @param options - Compression options. See {@link compress.CompressOptions}.
+ * @returns Koa middleware with introspection properties.
  */
 declare function compress(options?: compress.CompressOptions): compress.CompressMiddleware;
 
 declare module "koa" {
   interface DefaultContext {
     /**
-     * Context property used to handle individual responses.
-     * If it is set to `false`, the compression is disabled.
-     * If it is an object, it is mixed with the default options overriding
-     * its properties for this request.
+     * Per-response compression override.
+     * Set to `false` to disable compression, `true` to force it
+     * (bypassing the filter), or a `CompressOptions` object whose
+     * properties override the defaults for this response.
      */
     compress?: boolean | compress.CompressOptions;
   }
