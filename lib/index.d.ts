@@ -16,7 +16,7 @@ export type ThresholdFunction = (
 
 /**
  * Function to calculate compression parameters for `deflate` and `gzip` from a MIME type,
- * an exisiting size and the current context.
+ * an existing size and the current context.
  */
 export type ZlibOptionsFunction = (
   /** MIME type of the response */
@@ -29,7 +29,7 @@ export type ZlibOptionsFunction = (
 
 /**
  * Function to calculate compression parameters for `brotli` from a MIME type,
- * an exisiting size and the current context.
+ * an existing size and the current context.
  */
 export type BrotliOptionsFunction = (
   /** MIME type of the response */
@@ -42,7 +42,7 @@ export type BrotliOptionsFunction = (
 
 /**
  * Function to calculate compression parameters for `zstd` from a MIME type,
- * an exisiting size and the current context.
+ * an existing size and the current context.
  */
 export type ZstdOptionsFunction = (
   /** MIME type of the response */
