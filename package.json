@@ -1,7 +1,7 @@
 {
   "name": "koa-compress",
   "description": "Compress middleware for koa",
-  "version": "5.2.0",
+  "version": "5.2.1",
   "type": "commonjs",
   "author": {
     "name": "Jonathan Ong",

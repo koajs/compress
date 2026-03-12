@@ -1,5 +1,15 @@
 SEE https://github.com/koajs/compress/releases
 
+5.2.1 / 2026-03-12
+==================
+
+* fixed TS typings and refactored them
+* minor bug fix
+* simplified code and removed unused code
+* improved docs and typo fixes
+* more tests
+* updated dependencies
+
 5.2.0 / 2026-02-10
 ==================
 
