@@ -10,12 +10,14 @@ on:
 
 jobs:
   build:
-
+    name: Node.js ${{ matrix.node-version }} on ubuntu-latest
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
 
     strategy:
       matrix:
-        node-version: [20, 22, 24, 25]
+        node-version: [20, 22, 24]
 
     steps:
     - uses: actions/checkout@v4
