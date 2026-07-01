@@ -75,5 +75,9 @@
       "expect",
       "it"
     ]
+  },
+  "homepage": "https://github.com/koajs/compress",
+  "bugs": {
+    "url": "https://github.com/koajs/compress/issues"
   }
 }
