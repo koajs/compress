@@ -35,14 +35,14 @@
   },
   "devDependencies": {
     "@types/koa": "^3.0.3",
-    "@types/node": "^25.9.3",
-    "c8": "^11.0.0",
+    "@types/node": "^26.1.2",
+    "c8": "^12.0.0",
     "jest": "^30.4.2",
     "koa": "^3.2.1",
     "snazzy": "^9.0.0",
     "standard": "^17.1.2",
     "supertest": "^7.2.2",
-    "typescript": "^6.0.3"
+    "typescript": "^7.0.2"
   },
   "scripts": {
     "test": "jest",
