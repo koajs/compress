@@ -129,6 +129,54 @@ describe('Compress', () => {
     assert(!res.headers['content-length'])
   })
 
+  test('should compress Blob bodies', async () => {
+    const app = new Koa()
+
+    app.use(compress())
+    app.use((ctx) => {
+      ctx.type = 'text'
+      ctx.body = new Blob([string])
+    })
+    server = app.listen()
+
+    const res = await request(server).get('/').expect(200)
+
+    assert.strictEqual(res.headers['content-encoding'], 'gzip')
+    assert(!res.headers['content-length'])
+    assert.strictEqual(res.text, string)
+  })
+
+  test('should compress ReadableStream bodies', async () => {
+    const app = new Koa()
+
+    app.use(compress({ threshold: 0 }))
+    app.use((ctx) => {
+      ctx.type = 'text'
+      ctx.body = new Blob([string]).stream()
+    })
+    server = app.listen()
+
+    const res = await request(server).get('/').expect(200)
+
+    assert.strictEqual(res.headers['content-encoding'], 'gzip')
+    assert.strictEqual(res.text, string)
+  })
+
+  test('should compress Response bodies', async () => {
+    const app = new Koa()
+
+    app.use(compress({ threshold: 0 }))
+    app.use((ctx) => {
+      ctx.body = new Response(string, { headers: { 'Content-Type': 'text/plain' } })
+    })
+    server = app.listen()
+
+    const res = await request(server).get('/').expect(200)
+
+    assert.strictEqual(res.headers['content-encoding'], 'gzip')
+    assert.strictEqual(res.text, string)
+  })
+
   test('should compress when ctx.compress === true', async () => {
     const app = new Koa()
 
