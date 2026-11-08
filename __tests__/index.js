@@ -177,6 +177,21 @@ describe('Compress', () => {
     assert.strictEqual(res.text, string)
   })
 
+  test('should compress bodyless Response bodies as empty', async () => {
+    const app = new Koa()
+
+    app.use(compress())
+    app.use((ctx) => {
+      ctx.body = new Response(null, { headers: { 'Content-Type': 'text/plain' } })
+    })
+    server = app.listen()
+
+    const res = await request(server).get('/').expect(200)
+
+    assert.strictEqual(res.headers['content-encoding'], 'gzip')
+    assert.strictEqual(res.text, '')
+  })
+
   test('should pass ReadableStream errors to koa', async () => {
     const app = new Koa()
     const errors = []
