@@ -192,6 +192,25 @@ describe('Compress', () => {
     assert.strictEqual(res.text, '')
   })
 
+  test('should leave web bodies alone when not compressing', async () => {
+    const app = new Koa()
+
+    app.use(compress({ threshold: '1kb' }))
+    app.use((ctx) => {
+      ctx.type = 'text'
+      ctx.body = ctx.path === '/small' ? new Blob(['hi']) : new Blob([string]).stream()
+    })
+    server = app.listen()
+
+    const identity = await request(server).get('/').set('Accept-Encoding', 'identity').expect(200)
+    assert(!identity.headers['content-encoding'])
+    assert.strictEqual(identity.text, string)
+
+    const small = await request(server).get('/small').expect(200)
+    assert(!small.headers['content-encoding'])
+    assert.strictEqual(small.text, 'hi')
+  })
+
   test('should pass ReadableStream errors to koa', async () => {
     const app = new Koa()
     const errors = []
