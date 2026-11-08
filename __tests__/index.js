@@ -149,7 +149,7 @@ describe('Compress', () => {
   test('should compress ReadableStream bodies', async () => {
     const app = new Koa()
 
-    app.use(compress({ threshold: 0 }))
+    app.use(compress())
     app.use((ctx) => {
       ctx.type = 'text'
       ctx.body = new Blob([string]).stream()
@@ -165,7 +165,7 @@ describe('Compress', () => {
   test('should compress Response bodies', async () => {
     const app = new Koa()
 
-    app.use(compress({ threshold: 0 }))
+    app.use(compress())
     app.use((ctx) => {
       ctx.body = new Response(string, { headers: { 'Content-Type': 'text/plain' } })
     })
@@ -175,6 +175,29 @@ describe('Compress', () => {
 
     assert.strictEqual(res.headers['content-encoding'], 'gzip')
     assert.strictEqual(res.text, string)
+  })
+
+  test('should pass ReadableStream errors to koa', async () => {
+    const app = new Koa()
+    const errors = []
+
+    app.on('error', (err) => errors.push(err))
+    app.use(compress())
+    app.use((ctx) => {
+      ctx.type = 'text'
+      ctx.body = new ReadableStream({
+        start (controller) {
+          controller.enqueue(Buffer.from(string))
+          controller.error(new Error('boom'))
+        }
+      })
+    })
+    server = app.listen()
+
+    await request(server).get('/').catch(() => {})
+
+    assert(errors.length > 0)
+    for (const err of errors) assert.strictEqual(err.message, 'boom')
   })
 
   test('should compress when ctx.compress === true', async () => {
