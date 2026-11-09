@@ -60,9 +60,6 @@
   ],
   "main": "lib",
   "types": "lib/index.d.ts",
-  "engines": {
-    "node": ">= 12"
-  },
   "standard": {
     "globals": [
       "afterAll",
