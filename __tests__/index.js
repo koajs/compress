@@ -1,3 +1,4 @@
+const { Readable } = require('stream')
 const request = require('supertest')
 const assert = require('assert')
 const crypto = require('crypto')
@@ -223,6 +224,31 @@ describe('Compress', () => {
         start (controller) {
           controller.enqueue(Buffer.from(string))
           controller.error(new Error('boom'))
+        }
+      })
+    })
+    server = app.listen()
+
+    await request(server).get('/').catch(() => {})
+
+    assert(errors.length > 0)
+    for (const err of errors) assert.strictEqual(err.message, 'boom')
+  })
+
+  test('should pass stream errors to koa', async () => {
+    const app = new Koa()
+    const errors = []
+
+    app.on('error', (err) => errors.push(err))
+    app.use(compress())
+    app.use((ctx) => {
+      ctx.type = 'text'
+      let sent = false
+      ctx.body = new Readable({
+        read () {
+          if (sent) this.destroy(new Error('boom'))
+          else this.push(string)
+          sent = true
         }
       })
     })

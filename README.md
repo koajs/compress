@@ -97,6 +97,21 @@ app.use((ctx, next) => {
 Its `threshold` and encoding properties override the global defaults for this response.
 Note: an options object does **not** bypass the filter check — only `true` does.
 
+### Live streams
+
+The `threshold` applies to a stream only when you set `Content-Length`.
+Otherwise, Node.js streams, `ReadableStream` bodies, and `Response` bodies are compressed whenever the filter accepts their type.
+A compressor holds data until it has enough to compress, so a live stream, such as server-sent events, can reach the client late.
+To send a live stream as it's written, set `ctx.compress = false`:
+
+```js
+app.use((ctx, next) => {
+  ctx.compress = false;
+  ctx.type = "text/event-stream";
+  ctx.body = events; // a stream that writes each event as it happens
+});
+```
+
 ## Functional properties
 
 The `threshold` and per-encoding options can be functions. They are called
