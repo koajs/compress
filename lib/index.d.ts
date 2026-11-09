@@ -9,8 +9,8 @@ declare namespace compress {
   type ThresholdFunction = (
     /** MIME type of the response */
     type: string,
-    /** Size of the response in bytes */
-    size: number,
+    /** Size of the response in bytes, or `undefined` for a stream without `Content-Length` */
+    size: number | undefined,
     /** Context of the request */
     ctx: Koa.Context,
   ) => number | string | ThresholdFunction;
@@ -22,8 +22,8 @@ declare namespace compress {
   type ZlibOptionsFunction = (
     /** MIME type of the response */
     type: string,
-    /** Size of the response in bytes */
-    size: number,
+    /** Size of the response in bytes, or `undefined` for a stream without `Content-Length` */
+    size: number | undefined,
     /** Context of the request */
     ctx: Koa.Context,
   ) => boolean | null | ZlibOptions | ZlibOptionsFunction;
@@ -35,8 +35,8 @@ declare namespace compress {
   type BrotliOptionsFunction = (
     /** MIME type of the response */
     type: string,
-    /** Size of the response in bytes */
-    size: number,
+    /** Size of the response in bytes, or `undefined` for a stream without `Content-Length` */
+    size: number | undefined,
     /** Context of the request */
     ctx: Koa.Context,
   ) => boolean | null | BrotliOptions | BrotliOptionsFunction;
@@ -48,8 +48,8 @@ declare namespace compress {
   type ZstdOptionsFunction = (
     /** MIME type of the response */
     type: string,
-    /** Size of the response in bytes */
-    size: number,
+    /** Size of the response in bytes, or `undefined` for a stream without `Content-Length` */
+    size: number | undefined,
     /** Context of the request */
     ctx: Koa.Context,
   ) => boolean | null | ZstdOptions | ZstdOptionsFunction;

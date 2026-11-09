@@ -122,7 +122,7 @@ function compressTest() {
     app.use(
       compress({
         br: false,
-        gzip: (type, size) => /^text\//i.test(type) && size > 1000000,
+        gzip: (type, size) => /^text\//i.test(type) && size !== undefined && size > 1000000,
       }),
     );
     app.use(sendBuffer);
@@ -135,7 +135,7 @@ function compressTest() {
 
     app.use(compress({ br: false, gzip: false }));
     app.use((ctx) => {
-      ctx.compress = { gzip: (type, size) => size < 1000000 };
+      ctx.compress = { gzip: (type, size) => size !== undefined && size < 1000000 };
       ctx.body = string;
     });
     server = app.listen();
@@ -147,7 +147,7 @@ function compressTest() {
 
     app.use(compress({ br: false, gzip: false }));
     app.use((ctx) => {
-      ctx.compress = { gzip: (type, size) => size < 100 };
+      ctx.compress = { gzip: (type, size) => size !== undefined && size < 100 };
       ctx.body = string;
     });
     server = app.listen();

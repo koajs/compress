@@ -1,6 +1,24 @@
 {
   "name": "koa-compress",
-  "description": "Compress middleware for koa",
+  "description": "Koa middleware that compresses HTTP responses with zstd, Brotli, gzip, or deflate",
+  "keywords": [
+    "koa",
+    "koajs",
+    "koa-middleware",
+    "middleware",
+    "compress",
+    "compression",
+    "gzip",
+    "deflate",
+    "brotli",
+    "zstd",
+    "zstandard",
+    "content-encoding",
+    "accept-encoding",
+    "http",
+    "response",
+    "stream"
+  ],
   "version": "5.2.2",
   "type": "commonjs",
   "author": {
@@ -29,7 +47,6 @@
   "dependencies": {
     "bytes": "^3.1.2",
     "compressible": "^2.0.18",
-    "http-errors": "^2.0.1",
     "koa-is-json": "^1.0.0",
     "negotiator": "^1.0.0"
   },

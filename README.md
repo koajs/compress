@@ -126,7 +126,7 @@ The `threshold` and per-encoding options can be functions. They are called
 for every response with three arguments:
 
 - `type` &mdash; same as `ctx.response.type`
-- `size` &mdash; same as `ctx.response.length`
+- `size` &mdash; the response size in bytes, or `undefined` for a stream without `Content-Length`
 - `ctx` &mdash; the full Koa context object
 
 The function should return a valid value for that property.
