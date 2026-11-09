@@ -81,6 +81,14 @@ The HTTP spec treats a missing header as `*` (any encoding is acceptable),
 but that causes problems when debugging with tools like `curl` or `wget`.
 Set `defaultEncoding` to `"*"` to restore spec-compliant behavior.
 
+### options.rejectUnacceptable\<Boolean\>
+
+What to do when the client refuses every encoding the middleware can send, `identity` included (for example, `Accept-Encoding: identity;q=0`).
+By default, the response goes out uncompressed.
+Set `rejectUnacceptable` to `true` to respond with `406 Not Acceptable` instead.
+It applies only to responses that pass the filter and the threshold.
+Default: `false`.
+
 ## Manually turning compression on and off
 
 You can force compression by setting `ctx.compress = true` (bypasses the filter check).
@@ -94,7 +102,7 @@ app.use((ctx, next) => {
 ```
 
 `ctx.compress` can also be an options object (same shape as the middleware options).
-Its `threshold` and encoding properties override the global defaults for this response.
+Its `threshold`, `rejectUnacceptable`, and encoding properties override the global defaults for this response.
 Note: an options object does **not** bypass the filter check — only `true` does.
 
 ### Live streams

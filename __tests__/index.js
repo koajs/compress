@@ -920,6 +920,55 @@ describe('Compress', () => {
     assert.strictEqual(res.headers.vary, 'Accept-Encoding')
   })
 
+  test('should send identity when the client refuses every encoding', async () => {
+    const app = new Koa()
+    app.use(compress({ threshold: 0 }))
+    app.use((ctx) => {
+      ctx.type = 'text'
+      ctx.body = string
+    })
+    server = app.listen()
+
+    for (const header of ['identity;q=0', '*;q=0', 'gzip;q=0, identity;q=0']) {
+      const res = await request(server).get('/').set('Accept-Encoding', header).expect(200)
+      assert(!res.headers['content-encoding'])
+      assert.strictEqual(res.text, string)
+    }
+  })
+
+  test('should respond 406 when the client refuses every encoding and rejectUnacceptable is set', async () => {
+    const app = new Koa()
+    const middleware = compress({ threshold: 0, rejectUnacceptable: true })
+    app.use(middleware)
+    app.use((ctx) => {
+      ctx.type = 'text'
+      ctx.body = string
+    })
+    server = app.listen()
+
+    const res = await request(server).get('/').set('Accept-Encoding', 'identity;q=0').expect(406)
+    assert(!res.headers['content-encoding'])
+    assert.strictEqual(res.headers.vary, 'Accept-Encoding')
+    assert.strictEqual(res.text, `Please accept one of: ${middleware.preferredEncodings.join(', ')}.`)
+
+    const gzipped = await request(server).get('/').set('Accept-Encoding', 'gzip').expect(200)
+    assert.strictEqual(gzipped.headers['content-encoding'], 'gzip')
+  })
+
+  test('should take rejectUnacceptable from ctx.compress', async () => {
+    const app = new Koa()
+    app.use(compress({ threshold: 0 }))
+    app.use((ctx) => {
+      ctx.compress = { rejectUnacceptable: ctx.path === '/strict' }
+      ctx.type = 'text'
+      ctx.body = string
+    })
+    server = app.listen()
+
+    await request(server).get('/strict').set('Accept-Encoding', 'identity;q=0').expect(406)
+    await request(server).get('/').set('Accept-Encoding', 'identity;q=0').expect(200)
+  })
+
   test('boolean options for encodings: true', async () => {
     const app = new Koa()
     app.use(

@@ -87,6 +87,13 @@ declare namespace compress {
      */
     encodingPreference?: string[];
     /**
+     * What to do when the client refuses every encoding the middleware can
+     * send, `identity` included (for example, `Accept-Encoding: identity;q=0`):
+     * `false` sends the response uncompressed, `true` responds with
+     * `406 Not Acceptable`. Default: `false`.
+     */
+    rejectUnacceptable?: boolean;
+    /**
      * Options passed to `zlib.createDeflate()`, or `false`/`null` to disable.
      * Can be a {@link ZlibOptionsFunction} for per-response values.
      * Default: `{}`.

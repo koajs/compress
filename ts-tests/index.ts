@@ -222,5 +222,17 @@ function compressTest() {
     server = app.listen();
   }
   shouldBeIdentityIfBadWildcardAcceptEncodingTest();
+
+  async function shouldRejectUnacceptableTest() {
+    const app = new Koa();
+    app.use(compress({ rejectUnacceptable: true }));
+    app.use((ctx) => {
+      ctx.compress = { rejectUnacceptable: false };
+      ctx.type = "text";
+      ctx.body = buffer;
+    });
+    server = app.listen();
+  }
+  shouldRejectUnacceptableTest();
 }
 compressTest();
