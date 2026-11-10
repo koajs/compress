@@ -1,4 +1,19 @@
-SEE https://github.com/koajs/compress/releases
+5.3.0 / 2026-11-09
+==================
+
+* fixed `Blob` bodies, which were sent as `{}`, and compressed `Blob`, `ReadableStream`, and `Response` bodies, thx [yash](https://github.com/yxshee)
+* fixed a compressed stream body that fails partway: its error reaches Koa instead of leaving the response open
+* fixed a 500 when a client refuses every encoding, `identity` included: the response is sent uncompressed
+* added the `rejectUnacceptable` option to respond with `406 Not Acceptable` in that case instead
+* changed: `ReadableStream` and `Response` bodies without `Content-Length` are compressed regardless of `threshold`; set `ctx.compress = false` for live streams, such as server-sent events
+* breaking for strict TypeScript: the `size` argument of threshold and encoding functions is typed `number | undefined`
+* removed the unused `http-errors` dependency
+* updated docs and dependencies
+
+5.2.2 / 2026-06-15
+==================
+
+* skip compression for `206 Partial Content`, `Content-Range`, and `multipart/byteranges` responses, thx [naveentehrpariya](https://github.com/naveentehrpariya)
 
 5.2.1 / 2026-03-12
 ==================

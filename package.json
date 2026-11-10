@@ -19,7 +19,7 @@
     "response",
     "stream"
   ],
-  "version": "5.2.2",
+  "version": "5.3.0",
   "type": "commonjs",
   "author": {
     "name": "Jonathan Ong",
@@ -48,17 +48,17 @@
     "bytes": "^3.1.2",
     "compressible": "^2.0.18",
     "koa-is-json": "^1.0.0",
-    "negotiator": "^1.0.0"
+    "negotiator": "^1.1.0"
   },
   "devDependencies": {
     "@types/koa": "^3.0.3",
-    "@types/node": "^26.1.2",
+    "@types/node": "^26.6.6",
     "c8": "^9.1.0",
     "jest": "^29.7.0",
-    "koa": "^3.2.1",
+    "koa": "^3.3.0",
     "snazzy": "^9.0.0",
     "standard": "^17.1.2",
-    "supertest": "^7.2.2",
+    "supertest": "^7.3.2",
     "typescript": "^7.0.2"
   },
   "scripts": {
