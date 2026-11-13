@@ -32,6 +32,14 @@ app.use(
 );
 ```
 
+## Supported Node.js versions
+
+koa-compress supports the Node.js versions that the Node.js project maintains: the release lines that haven't reached their end of life.
+The [Node.js release schedule](https://github.com/nodejs/release#release-schedule) lists them with their end-of-life dates.
+CI tests each of them.
+
+To run koa-compress on a Node.js version past its end of life, pin an older koa-compress release that works there in your project's `package.json` file.
+
 ## Maintainers
 
 - Lead: @jonathanong [@jongleberry](https://twitter.com/jongleberry)
